@@ -20,9 +20,9 @@ You can pass through persistent [options to rest-client](https://github.com/rest
 
     b = Bateman.new 'google.com', max_redirects: 3
 
-Declare what you accept: (optional, defaults to :json, :html, :text)
+Declare what you accept: (optional, default below)
 
-    b.accept :json, :html
+    b.accept :json, :html, :text
 
 GET http://google.com/
 
@@ -53,3 +53,25 @@ Call Bateman#resource directly for finer-grained response handling:
 Bateman, while focused on JSON, is aware of several content types: application/json, text/html, and text/plain.  If you call the convenience methods #get #post #put or #delete, then JSON parsing will be automatically performed for responses with Content-type: application/json.
 
 In other words, Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
+
+Here is the heart of the Bateman's [response processing](https://github.com/rickhull/bateman/blob/master/lib/bateman.rb#L37):
+
+    # this structure declares what we support in the request Accept: header
+    # and defines automatic processing of the response based on the
+    # response Content-type: header
+    #
+    CONTENT = {
+      json: {
+        type: 'application/json',
+        proc: proc { |text| JSON.parse(text, symobolize_names: true) },
+      },
+      html: {
+        type: 'text/html',
+        proc: proc { |text| text },
+      },
+      text: {
+        type: 'text/plain',
+        proc: proc { |text| text },
+      },
+    }
+

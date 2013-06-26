@@ -18,7 +18,7 @@ Initialize it with a host:
 
 You can pass through persistent [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
-    b = Bateman.new 'google.com, max_redirects: 3
+    b = Bateman.new 'google.com', max_redirects: 3
 
 Declare what you accept: (optional, defaults to :json, :html, :text)
 

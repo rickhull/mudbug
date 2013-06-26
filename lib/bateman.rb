@@ -24,7 +24,7 @@ class Bateman
   }
 
   # map our internal symbols to HTTP content types
-  # passes through unknown content types as application/$type
+  # passes through unknown symbols as application/$symbol
   #
   def self.accept(*types)
     types.map { |t|

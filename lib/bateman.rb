@@ -114,9 +114,12 @@ class Bateman
   end
 
   # (JSON) payload required
+  # if payload is a String, then assume it's already JSON
+  # otherwise apply #to_json to payload automatically
   #
   [:post, :put].each { |meth|
     define_method(meth) { |path, payload, options={}|
+      unless payload.is_a?(String) payload = payload.to_json
       res = resource(path, options)
       response = res.send(meth, payload)
       case response.code

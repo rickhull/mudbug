@@ -124,6 +124,8 @@ class Bateman
       response = res.send(meth, payload)
       case response.code
       when 200..299
+        # this is provisional code for testing
+        # sorry it's on master.  welp.
         begin
           self.class.process(response, res.headers[:accept])
         rescue JSONParser::Error => e

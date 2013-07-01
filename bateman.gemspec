@@ -1,12 +1,12 @@
 Gem::Specification.new do |s|
-  s.name        = 'json_resource'
+  s.name        = 'bateman'
   s.version     = '0.1'
   s.date        = '2013-06-28'
   s.summary     = "A thin layer over rest-client that returns JSON objects"
   s.description = "It does stuff"
   s.authors     = ["Rick Hull"]
   s.email       = 'rick@cloudscaling.com'
-  s.files       = ["lib/json_resource.rb"]
+  s.files       = ["lib/bateman.rb"]
   s.homepage    = 'http://gems.cloudscaling.com/'
 
   # just guessing on the versions, here

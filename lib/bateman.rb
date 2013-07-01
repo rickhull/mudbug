@@ -135,32 +135,48 @@ end
 
 if __FILE__ == $0
   sites = %w{google.com yahoo.com microsoft.com amazon.com ibm.com reddit.com}
-
-  payload = { 'hi' => 'mom' }.to_json
+  accepts = [:json, :html, :text, :xml]
+  methods = [:get, :post, :put, :delete]
 
   path = '/'
+  payload = { 'hi' => 'mom' }.to_json
 
-  accepts = [:json, :html, :text, :xml]
-
+  puts "Checking Accepts across sites"
   sites.each { |site|
     b = Bateman.new(site)
     url = "http://#{site}#{path}"
+
     accepts.each { |acp|
       b.accept(acp)
 
-      [:get, :post, :put, :delete].each { |meth|
-        puts "#{meth.to_s.upcase} #{url}  [#{acp}]"
-        args = [meth, path]
-        args << payload if [:post, :put].include?(meth)
-
-        # DO IT
-        begin
-          b.send(*args)
-        rescue RuntimeError => e
-          puts e.class
-        end
-      }
+      puts "GET #{url}  [#{acp}]"
+      b.get path
     }
+    puts
+    puts
+  }
+
+  puts
+  puts
+
+  puts "Checking Methods across sites"
+  sites.each { |site|
+    b = Bateman.new(site)
+    url = "http://#{site}#{path}"
+
+    methods.each { |meth|
+      args = [meth, path]
+      args << payload if [:post, :put].include?(meth)
+
+      puts "#{meth.to_s.upcase} #{url}"
+      # DO IT
+      begin
+        b.send(*args)
+      rescue RuntimeError => e
+        puts e.class
+      end
+    }
+    puts
     puts
   }
 end

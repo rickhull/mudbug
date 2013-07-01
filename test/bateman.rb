@@ -1,3 +1,3 @@
-require 'json_resource'
+require 'bateman'
 require 'minitest/spec'
 require 'minitest/autorun'

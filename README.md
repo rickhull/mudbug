@@ -31,8 +31,9 @@ You can pass through one-time options to rest-client:
 
     b.get '/, max_redirects: 3
 
-Call #resource directly for finer-grained response handling:
+Call Bateman#resource directly for finer-grained response handling:
 
+    b = Bateman.new 'google.com'
     res = b.resource '/'
     resp = res.get
     # check resp.code

@@ -10,6 +10,9 @@ Features
 * Understand and fall back to basic Content-types if application/json is not provided
 * Fine-grained response handling using Bateman#resource
 
+
+Usage
+-----
 Initialize it with a host:
 
     b = Bateman.new 'google.com'

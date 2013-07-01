@@ -1,6 +1,6 @@
 Bateman
 =======
-Bateman is a JSON-oriented, thin wrapper around rest-client's RestClient::Resource
+Bateman is a JSON-oriented, thin wrapper around [rest-client](https://github.com/rest-client/rest-client)'s [RestClient::Resource](https://github.com/rest-client/rest-client#usage-activeresource-style)
 
 Features
 --------
@@ -9,7 +9,6 @@ Features
 * Do The Right Thing 80% of the time every time
 * Understand and fall back to basic Content-types if application/json is not provided
 * Fine-grained response handling using Bateman#resource
-
 
 Usage
 -----

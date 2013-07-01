@@ -22,7 +22,7 @@ Declare what you accept: (optional, defaults to :json, :html, :text)
 
     b.accept :json, :html
 
-GET /
+GET http://google.com/
 
     b.get '/'
     # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "

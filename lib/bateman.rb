@@ -128,6 +128,7 @@ class Bateman
           self.class.process(response, res.headers[:accept])
         rescue JSONParser::Error => e
           warn "rescued #{e.class}"
+          response.body
         end
       else
         raise(StatusCodeError, "#{meth.to_s.upcase} #{path} #{resp.code}")

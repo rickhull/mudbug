@@ -21,6 +21,7 @@ Declare what you accept: (optional, defaults to :json, :html, :text)
 GET /
 
     b.get '/'
+    # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
 
 You can pass through one-time options to rest-client:
 

@@ -1,7 +1,7 @@
 require 'rest-client'
 require 'json'
 
-class JSONResource
+class Bateman
   class StatusCodeError < RuntimeError; end
 
   # this structure declares what we support in the request Accept: header
@@ -143,10 +143,10 @@ if __FILE__ == $0
   accepts = [:json, :html, :text, :xml]
 
   sites.each { |site|
-    j = JSONResource.new(site)
+    b = Bateman.new(site)
     url = "http://#{site}#{path}"
     accepts.each { |acp|
-      j.accept(acp)
+      b.accept(acp)
 
       [:get, :post, :put, :delete].each { |meth|
         puts "#{meth.to_s.upcase} #{url}  [#{acp}]"
@@ -155,7 +155,7 @@ if __FILE__ == $0
 
         # DO IT
         begin
-          j.send(*args)
+          b.send(*args)
         rescue RuntimeError => e
           puts e.class
         end

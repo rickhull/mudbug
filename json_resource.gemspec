@@ -8,6 +8,8 @@ Gem::Specification.new do |s|
   s.email       = 'rick@cloudscaling.com'
   s.files       = ["lib/json_resource.rb"]
   s.homepage    = 'http://gems.cloudscaling.com/'
+
+  # just guessing on the versions, here
   s.add_runtime_dependency "rest-client", [">= 1.0"]
   s.add_runtime_dependency "json", [">= 1.0"]
   s.add_development_dependency "minitest", [">= 0"]

@@ -1,8 +1,5 @@
-bateman
+Bateman
 =======
-
-Hopefully development will not be arrested on this gem of a JSON-parsing REST client
-
 Bateman is a JSON-oriented, thin wrapper around rest-client's RestClient::Resource
 
 Its main features are convenience and Doing The Right Thing 80% of the time every time.
@@ -20,7 +17,7 @@ You can pass through persistent options to rest-client: [add pointer to lib/rest
 Declare what you accept: (optional, defaults to :json, :html, :text)
 
     b.accept :json, :html
-    
+
 GET /
 
     b.get '/'
@@ -42,7 +39,7 @@ RestClient exceptions will be passed through:
 
     b = Bateman.new 'google.com'
     b.post '/', Hash.new.to_json
-    
+
     /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
 Bateman, while focused on JSON, is aware of several content types: application/json, text/html, and text/plain.  If you call the convenience methods #get #post #put or #delete, then JSON parsing will be automatically performed for Content-type: application/json

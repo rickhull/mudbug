@@ -10,7 +10,7 @@ Initialize it with a host:
 
     b = Bateman.new 'google.com'
 
-You can pass through persistent options to rest-client: [add pointer to lib/restclient/request.rb]
+You can pass through [persistent options](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb) to rest-client:
 
     b = Bateman.new 'google.com, max_redirects: 3
 

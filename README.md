@@ -2,9 +2,18 @@ Bateman
 =======
 Bateman is a JSON-oriented, thin wrapper around rest-client's RestClient::Resource
 
-Its main features are convenience and Doing The Right Thing 80% of the time every time.
+Use Case
+--------
+* *GET*, *POST*, *PUT*, or *DELETE* JSON payloads
 
-If you need finer-grained response handling, just call Bateman#resource directly.
+It understands a few basic content types other than application/json so that it can Do The Right Thing if the web server doesn't provide a JSON response.
+
+Features
+--------
+* Convenience
+* Do The Right Thing 80% of the time every time
+* Understand and fall back to basic Content-types if application/json is not provided
+* Fine-grained response handling using Bateman#resource
 
 Initialize it with a host:
 

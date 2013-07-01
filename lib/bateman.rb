@@ -136,7 +136,7 @@ end
 if __FILE__ == $0
   sites = %w{google.com yahoo.com microsoft.com amazon.com ibm.com reddit.com}
   accepts = [:json, :html, :text, :xml]
-  methods = [:get, :post, :put, :delete]
+  http_methods = [:get, :post, :put, :delete]
 
   path = '/'
   payload = { 'hi' => 'mom' }.to_json
@@ -159,12 +159,12 @@ if __FILE__ == $0
   puts
   puts
 
-  puts "Checking Methods across sites"
+  puts "Checking HTTP methods across sites"
   sites.each { |site|
     b = Bateman.new(site)
     url = "http://#{site}#{path}"
 
-    methods.each { |meth|
+    http_methods.each { |meth|
       args = [meth, path]
       args << payload if [:post, :put].include?(meth)
 

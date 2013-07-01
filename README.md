@@ -43,13 +43,13 @@ Call Bateman#resource directly for finer-grained response handling:
     # process resp.body
     # etc.
 
-RestClient exceptions will be passed through:
+[RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through:
 
     b = Bateman.new 'google.com'
     b.post '/', Hash.new.to_json
 
     /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
-Bateman, while focused on JSON, is aware of several content types: application/json, text/html, and text/plain.  If you call the convenience methods #get #post #put or #delete, then JSON parsing will be automatically performed for Content-type: application/json
+Bateman, while focused on JSON, is aware of several content types: application/json, text/html, and text/plain.  If you call the convenience methods #get #post #put or #delete, then JSON parsing will be automatically performed for responses with Content-type: application/json.
 
 In other words, Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.

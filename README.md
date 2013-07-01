@@ -30,7 +30,7 @@ GET http://google.com/
     b.get '/'
     # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
 
-You can pass through one-time options to rest-client:
+You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
     b.get '/, max_redirects: 3
 

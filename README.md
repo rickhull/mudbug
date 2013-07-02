@@ -11,6 +11,16 @@ Features
 * Understand and fall back to basic Content-types if application/json is not provided
 * Fine-grained response handling using Bateman#resource
 
+Quick Start
+-----------
+The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
+
+    b = Bateman.new('ip.jsontest.com')
+    resp = b.get '/'
+    # => {"ip"=>"12.34.56.78"}
+
+    resp.class
+    # => Hash
 
 Usage
 -----
@@ -43,15 +53,6 @@ You can pass through per-request [options to rest-client](https://github.com/res
     Bateman.new('facebook.com').delete '/'
 
      /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
-
-The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
-
-    b = Bateman.new('ip.jsontest.com')
-    resp = b.get '/'
-    # => {"ip"=>"12.34.56.78"}
-
-    resp.class
-    # => Hash
 
 Careful with that axe, Eugene
 -----------------------------

@@ -40,10 +40,10 @@ sites.each { |site|
     print "#{meth.to_s.upcase} #{url} "
     begin
       b.send(*args)
+      puts
     rescue RuntimeError => e
       puts e.class
     end
-    puts
   }
   puts
 }

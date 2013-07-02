@@ -1,0 +1,87 @@
+rwh@ubuntuVM:~/git/bateman/examples$ ruby accepts_and_methods.rb
+
+Checking Accepts across sites
+=============================
+GET http://google.com/  [json] Asked for application/json but got text/html
+
+GET http://google.com/  [html]
+GET http://google.com/  [text] Asked for text/plain but got text/html
+
+GET http://google.com/  [xml] Asked for application/xml but got text/html
+
+
+GET http://yahoo.com/  [json] Asked for application/json but got text/html
+
+GET http://yahoo.com/  [html]
+GET http://yahoo.com/  [text] Asked for text/plain but got text/html
+
+GET http://yahoo.com/  [xml] Asked for application/xml but got text/html
+
+
+GET http://microsoft.com/  [json] Asked for application/json but got text/html
+
+GET http://microsoft.com/  [html]
+GET http://microsoft.com/  [text] Asked for text/plain but got text/html
+
+GET http://microsoft.com/  [xml] Asked for application/xml but got text/html
+
+
+GET http://amazon.com/  [json] Asked for application/json but got text/html
+
+GET http://amazon.com/  [html]
+GET http://amazon.com/  [text] Asked for text/plain but got text/html
+
+GET http://amazon.com/  [xml] Asked for application/xml but got text/html
+
+
+GET http://ibm.com/  [json] Asked for application/json but got text/html
+
+GET http://ibm.com/  [html]
+GET http://ibm.com/  [text] Asked for text/plain but got text/html
+
+GET http://ibm.com/  [xml] Asked for application/xml but got text/html
+
+
+GET http://reddit.com/  [json] Asked for application/json but got text/html
+
+GET http://reddit.com/  [html]
+GET http://reddit.com/  [text] Asked for text/plain but got text/html
+
+GET http://reddit.com/  [xml] Asked for application/xml but got text/html
+
+
+
+
+Checking HTTP methods across sites
+==================================
+GET http://google.com/
+POST http://google.com/ RestClient::MethodNotAllowed
+PUT http://google.com/ RestClient::MethodNotAllowed
+DELETE http://google.com/ RestClient::MethodNotAllowed
+
+GET http://yahoo.com/
+POST http://yahoo.com/ RestClient::MovedPermanently
+PUT http://yahoo.com/ RestClient::MovedPermanently
+DELETE http://yahoo.com/ RestClient::MovedPermanently
+
+GET http://microsoft.com/
+POST http://microsoft.com/ RestClient::MovedPermanently
+PUT http://microsoft.com/ RestClient::ResourceNotFound
+DELETE http://microsoft.com/ RestClient::ResourceNotFound
+
+GET http://amazon.com/
+POST http://amazon.com/ RestClient::ServiceUnavailable
+PUT http://amazon.com/ RestClient::MovedPermanently
+DELETE http://amazon.com/ RestClient::MovedPermanently
+
+GET http://ibm.com/
+POST http://ibm.com/ RestClient::MovedPermanently
+PUT http://ibm.com/ RestClient::Forbidden
+DELETE http://ibm.com/ RestClient::Forbidden
+
+GET http://reddit.com/
+POST http://reddit.com/ RestClient::Found
+PUT http://reddit.com/ RestClient::Found
+DELETE http://reddit.com/ RestClient::Found
+
+DONE

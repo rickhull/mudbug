@@ -35,9 +35,7 @@ You can pass through per-request [options to rest-client](https://github.com/res
 
 Call Bateman#resource directly for finer-grained response handling:
 
-    b = Bateman.new 'google.com'
-    res = b.resource '/'
-    resp = res.get
+    resp = Bateman.new('google.com').resource('/').get
     # check resp.code
     # check resp.headers
     # process resp.body

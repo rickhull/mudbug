@@ -13,7 +13,7 @@ Features
 
 Quick Start
 -----------
-The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
+The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* **application/json** header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
     response = Bateman.new('ip.jsontest.com').get '/'
     # => {"ip"=>"12.34.56.78"}

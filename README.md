@@ -44,6 +44,9 @@ You can pass through per-request [options to rest-client](https://github.com/res
 
      /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 
+Careful with that axe, Eugene
+-----------------------------
+
 Call Bateman#resource directly for finer-grained response handling:
 
     resp = Bateman.new('google.com').resource('/').get

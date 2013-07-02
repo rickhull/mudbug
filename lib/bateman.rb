@@ -33,7 +33,7 @@ class Bateman
     types.map.with_index { |t, i|
       type = CONTENT[t] ? CONTENT[t][:type] : "application/#{t.to_s.downcase}"
       quality = "q=" << sprintf("%0.1f", 1.0 - i*0.1)
-      [type, quality].join(';')
+      i == 0 ? type : [type, quality].join(';')
     }.join(', ')
   end
 
@@ -61,6 +61,7 @@ class Bateman
   end
 
   attr_reader :options
+  attr_accessor :host
 
   def initialize(host, options = nil)
     @host = host

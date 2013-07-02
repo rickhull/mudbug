@@ -1,4 +1,4 @@
-rwh@ubuntuVM:~/git/bateman/examples$ ruby accepts_and_methods.rb
+rwh@ubuntuVM:~/git/bateman$ ruby examples/accepts_and_methods.rb
 
 Checking Accepts across sites
 =============================
@@ -55,33 +55,33 @@ GET http://reddit.com/  [xml] Asked for application/xml but got text/html
 Checking HTTP methods across sites
 ==================================
 GET http://google.com/
-POST http://google.com/ RestClient::MethodNotAllowed
-PUT http://google.com/ RestClient::MethodNotAllowed
-DELETE http://google.com/ RestClient::MethodNotAllowed
+POST http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
+PUT http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
+DELETE http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
 GET http://yahoo.com/
-POST http://yahoo.com/ RestClient::MovedPermanently
-PUT http://yahoo.com/ RestClient::MovedPermanently
-DELETE http://yahoo.com/ RestClient::MovedPermanently
+POST http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+DELETE http://yahoo.com/ 403 Forbidden (RestClient::Forbidden)
 
 GET http://microsoft.com/
-POST http://microsoft.com/ RestClient::MovedPermanently
-PUT http://microsoft.com/ RestClient::ResourceNotFound
-DELETE http://microsoft.com/ RestClient::ResourceNotFound
+POST http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://microsoft.com/ 404 Resource Not Found: The resource you are looking for has been removed, had its name changed, or is temporarily unavailable. (RestClient::ResourceNotFound)
+DELETE http://microsoft.com/ 404 Resource Not Found: The resource you are looking for has been removed, had its name changed, or is temporarily unavailable. (RestClient::ResourceNotFound)
 
 GET http://amazon.com/
-POST http://amazon.com/ RestClient::ServiceUnavailable
-PUT http://amazon.com/ RestClient::MovedPermanently
-DELETE http://amazon.com/ RestClient::MovedPermanently
+POST http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
+DELETE http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 GET http://ibm.com/
-POST http://ibm.com/ RestClient::MovedPermanently
-PUT http://ibm.com/ RestClient::Forbidden
-DELETE http://ibm.com/ RestClient::Forbidden
+POST http://ibm.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
+DELETE http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
 
 GET http://reddit.com/
-POST http://reddit.com/ RestClient::Found
-PUT http://reddit.com/ RestClient::Found
-DELETE http://reddit.com/ RestClient::Found
+POST http://reddit.com/ 302 Found (RestClient::Found)
+PUT http://reddit.com/ 302 Found (RestClient::Found)
+DELETE http://reddit.com/ 302 Found (RestClient::Found)
 
 DONE

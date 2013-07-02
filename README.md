@@ -44,9 +44,17 @@ You can pass through per-request [options to rest-client](https://github.com/res
 
      /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 
+The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
+
+    b = Bateman.new('ip.jsontest.com')
+    resp = b.get '/'
+    # => {"ip"=>"12.34.56.78"}
+
+    resp.class
+    # => Hash
+
 Careful with that axe, Eugene
 -----------------------------
-
 Call Bateman#resource directly for finer-grained response handling:
 
     resp = Bateman.new('google.com').resource('/').get
@@ -59,8 +67,6 @@ Bateman, while focused on JSON, is aware of several content types:
 * :json - application/json
 * :html - text/html
 * :text - text/plain
-
-The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
 Here is the heart of the Bateman's [response processing](https://github.com/rickhull/bateman/blob/master/lib/bateman.rb#L37):
 

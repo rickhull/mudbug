@@ -26,21 +26,15 @@ Declare what you accept: (optional, default shown)
 
 You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb)
 
-GET http://google.com/
-
     b.get '/', max_redirects: 3
     # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
 
 [RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through.  POST and PUT payloads will be sent as Strings.  Non-String payloads will be converted to JSON by calling #to_json.
 
-POST http://plus.google.com/
-
     b = Bateman.new 'plus.google.com'
-    b.post '/', { 'hi' => 'mom' }
+    b.post '/', { 'hi' => 'mom' }, max_redirects: 3
 
     /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
-
-DELETE http://facebook.com/
 
     # lawyer up
     # hit gym

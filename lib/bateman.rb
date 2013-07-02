@@ -64,8 +64,7 @@ class Bateman
 
   def initialize(host, options = nil)
     @host = host
-    @options = { open_timeout: 100 }
-    @options.merge!(options) if options
+    @options = options || {}
     accept :json, :html, :text
   end
 

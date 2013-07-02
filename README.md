@@ -82,6 +82,10 @@ Funny, that
 -----------
 Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
 
+[RFC 2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)
+
+> If no Accept header field is present, then it is assumed that the client accepts all media types. If an Accept header field is present, and if the server cannot send a response which is acceptable according to the combined Accept field value, then the server SHOULD send a 406 (not acceptable) response.
+
 Examples
 --------
 * accepts_and_methods [sample script](https://github.com/rickhull/bateman/blob/master/examples/accepts_and_methods.rb)

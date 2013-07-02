@@ -20,7 +20,7 @@ You can pass through persistent [options to rest-client](https://github.com/rest
 
     b = Bateman.new 'google.com', max_redirects: 3
 
-Declare what you accept: (optional, default below)
+Declare what you accept: (optional, default shown)
 
     b.accept :json, :html, :text
 

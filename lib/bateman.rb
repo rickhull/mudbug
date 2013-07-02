@@ -26,19 +26,21 @@ class Bateman
   }
 
   # map our internal symbols to HTTP content types
-  # passes through unknown symbols as application/$symbol
+  # assign q scores based on the parameter order
+  # construct the right side of the Accept: header
   #
-  def self.accept(*types)
-    types.map { |t|
-      (CONTENT[t] and CONTENT[t][:type]) or "application/#{t.to_s.downcase}"
-    }
+  def self.accept_header(*types)
+    types.map.with_index { |t, i|
+      type = CONTENT[t] ? CONTENT[t][:type] : "application/#{t.to_s.downcase}"
+      quality = "q=" << sprintf("%0.1f", 1.0 - i*0.1)
+      [type, quality].join(';')
+    }.join(', ')
   end
 
   # do stuff based on response's Content-type
   #
   def self.process(resp, accept = nil)
     # do you even Content-type, bro?
-    #
     ct = resp.headers[:content_type]
     unless ct
       warn "process NOOP -- no response Content-type"
@@ -46,12 +48,10 @@ class Bateman
     end
 
     # warn if we got Content-type we didn't ask for
-    #
     ct, charset = ct.split(';').map { |s| s.strip }
     warn "Asked for #{accept} but got #{ct}" if accept and !accept.include?(ct)
 
     # process the response for known content types
-    #
     CONTENT.each { |sym, hsh|
       return hsh[:proc].call(resp.body) if ct == hsh[:type]
     }
@@ -72,13 +72,13 @@ class Bateman
   # e.g.
   # accept :json, :html  # Accept: application/json, text/html
   # accept nil           # remove Accept: header
-  # TODO: automatically weight based on order
+  # now adds q-scores automatically based on order
   #
   def accept(*types)
     types = types.first if types.first.is_a?(Array)
     @options[:headers] ||= {}
     return @options[:headers].delete(:accept) if types.first.nil?
-    @options[:headers][:accept] = self.class.accept(*types).join(', ')
+    @options[:headers][:accept] = self.class.accept_header(*types)
   end
 
   # use this method directly if you want finer-grained request and response

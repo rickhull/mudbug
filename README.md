@@ -7,8 +7,10 @@ Features
 * *GET*, *POST*, *PUT*, or *DELETE* JSON payloads
 * Convenience
 * Do The Right Thing 80% of the time every time
+* Simple *Accept:* headers with automatic q-score weighting
 * Understand and fall back to basic Content-types if application/json is not provided
 * Fine-grained response handling using Bateman#resource
+
 
 Usage
 -----

@@ -24,14 +24,29 @@ Declare what you accept: (optional, default shown)
 
     b.accept :json, :html, :text
 
+You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb)
+
 GET http://google.com/
 
-    b.get '/'
+    b.get '/', max_redirects: 3
     # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
 
-You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
+[RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through.  POST and PUT payloads will be sent as Strings.  Non-String payloads will be converted to JSON by calling #to_json.
 
-    b.get '/', max_redirects: 3
+POST http://plus.google.com/
+
+    b = Bateman.new 'plus.google.com'
+    b.post '/', { 'hi' => 'mom' }
+
+    /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
+
+DELETE http://facebook.com/
+
+    # lawyer up
+    # hit gym
+    Bateman.new('facebook.com').delete '/'
+
+     /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 
 Call Bateman#resource directly for finer-grained response handling:
 
@@ -40,13 +55,6 @@ Call Bateman#resource directly for finer-grained response handling:
     # check resp.headers
     # process resp.body
     # etc.
-
-[RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through:
-
-    b = Bateman.new 'google.com'
-    b.post '/', Hash.new.to_json
-
-    /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
 Bateman, while focused on JSON, is aware of several content types:
 * :json - application/json

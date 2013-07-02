@@ -1,3 +1,6 @@
+# normally, just require 'bateman', but this will use your local version
+# useful for development purposes
+#
 require_relative '../lib/bateman'
 
 sites = %w{google.com yahoo.com microsoft.com amazon.com ibm.com reddit.com}

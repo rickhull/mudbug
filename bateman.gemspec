@@ -1,7 +1,5 @@
 Gem::Specification.new do |s|
   s.name        = 'bateman'
-  s.version     = '0.1'
-  s.date        = '2013-06-28'
   s.summary     = "A thin layer over rest-client that returns JSON objects"
   s.description = "It does stuff"
   s.authors     = ["Rick Hull"]

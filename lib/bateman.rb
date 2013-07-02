@@ -2,6 +2,8 @@ require 'rest-client'
 require 'json'
 
 class Bateman
+  VERSION = '0.2.0'
+
   class StatusCodeError < RuntimeError; end
 
   # this structure declares what we support in the request Accept: header
@@ -119,7 +121,7 @@ class Bateman
   #
   [:post, :put].each { |meth|
     define_method(meth) { |path, payload, options={}|
-      unless payload.is_a?(String) payload = payload.to_json
+      payload = payload.to_json unless payload.is_a?(String)
       res = resource(path, options)
       response = res.send(meth, payload)
       case response.code

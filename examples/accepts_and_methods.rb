@@ -7,7 +7,9 @@ http_methods = [:get, :post, :put, :delete]
 path = '/'
 payload = { 'hi' => 'mom' }.to_json
 
+puts
 puts "Checking Accepts across sites"
+puts "============================="
 sites.each { |site|
   b = Bateman.new(site)
   url = "http://#{site}#{path}"
@@ -15,10 +17,10 @@ sites.each { |site|
   accepts.each { |acp|
     b.accept(acp)
 
-    puts "GET #{url}  [#{acp}]"
+    print "GET #{url}  [#{acp}] "
     b.get path
+    puts
   }
-  puts
   puts
 }
 
@@ -26,6 +28,7 @@ puts
 puts
 
 puts "Checking HTTP methods across sites"
+puts "=================================="
 sites.each { |site|
   b = Bateman.new(site)
   url = "http://#{site}#{path}"
@@ -34,15 +37,14 @@ sites.each { |site|
     args = [meth, path]
     args << payload if [:post, :put].include?(meth)
 
-    puts "#{meth.to_s.upcase} #{url}"
-    # DO IT
+    print "#{meth.to_s.upcase} #{url} "
     begin
       b.send(*args)
     rescue RuntimeError => e
       puts e.class
     end
+    puts
   }
-  puts
   puts
 }
 

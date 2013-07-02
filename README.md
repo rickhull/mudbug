@@ -15,11 +15,10 @@ Quick Start
 -----------
 The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
-    b = Bateman.new('ip.jsontest.com')
-    resp = b.get '/'
+    response = Bateman.new('ip.jsontest.com').get '/'
     # => {"ip"=>"12.34.56.78"}
 
-    resp.class
+    response.class
     # => Hash
 
 Usage

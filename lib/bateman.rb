@@ -117,7 +117,7 @@ class Bateman
 
   # (JSON) payload required
   # if payload is a String, then assume it's already JSON
-  # otherwise apply #to_json to payload automatically
+  # otherwise apply #to_json to payload automatically.  Quack.
   #
   [:post, :put].each { |meth|
     define_method(meth) { |path, payload, options={}|

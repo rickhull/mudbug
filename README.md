@@ -79,3 +79,8 @@ Here is the heart of the Bateman's [response processing](https://github.com/rick
     }
 
 Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
+
+Examples
+--------
+* accepts_and_methods [sample script](https://github.com/rickhull/bateman/blob/master/examples/accepts_and_methods.rb)
+* accepts_and_methods [sample output](https://github.com/rickhull/bateman/blob/master/examples/accepts_and_methods.txt)

@@ -78,6 +78,8 @@ Here is the heart of the Bateman's [response processing](https://github.com/rick
       },
     }
 
+Funny, that
+-----------
 Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
 
 Examples

@@ -31,7 +31,7 @@ GET http://google.com/
 
 You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
-    b.get '/, max_redirects: 3
+    b.get '/', max_redirects: 3
 
 Call Bateman#resource directly for finer-grained response handling:
 

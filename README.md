@@ -57,8 +57,6 @@ Bateman, while focused on JSON, is aware of several content types:
 
 If you call the convenience methods *#get*, *#post*, *#put*, or *#delete*, then JSON parsing will be automatically performed for responses with *Content-type:* application/json.
 
-In other words, Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
-
 Here is the heart of the Bateman's [response processing](https://github.com/rickhull/bateman/blob/master/lib/bateman.rb#L37):
 
     # this structure declares what we support in the request Accept: header
@@ -80,3 +78,4 @@ Here is the heart of the Bateman's [response processing](https://github.com/rick
       },
     }
 
+Bateman works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.

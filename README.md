@@ -55,7 +55,7 @@ Bateman, while focused on JSON, is aware of several content types:
 * :html - text/html
 * :text - text/plain
 
-If you call the convenience methods *#get*, *#post*, *#put*, or *#delete*, then JSON parsing will be automatically performed for responses with *Content-type:* application/json.
+The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* application/json header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
 Here is the heart of the Bateman's [response processing](https://github.com/rickhull/bateman/blob/master/lib/bateman.rb#L37):
 

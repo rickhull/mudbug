@@ -13,9 +13,13 @@ Features
 
 Quick Start
 -----------
+Initialize it with a host:
+
+    b = Bateman.new 'ip.jsontest.com'
+
 The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* **application/json** header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
-    response = Bateman.new('ip.jsontest.com').get '/'
+    response = b.get '/'
     # => {"ip"=>"12.34.56.78"}
 
     response.class
@@ -23,10 +27,6 @@ The convenience methods *#get*, *#post*, *#put*, or *#delete* return the respons
 
 Usage
 -----
-Initialize it with a host:
-
-    b = Bateman.new 'google.com'
-
 You can pass through persistent [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
     b = Bateman.new 'google.com', max_redirects: 3

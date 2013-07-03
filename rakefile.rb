@@ -3,34 +3,91 @@ require 'yaml'
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
 
-VERSION_FILENAME = 'VERSION'
-GEMSPEC_FILENAME = "#{PROJECT_NAME}.gemspec"
-GEMSTAT_FILENAME = 'gemspec.yaml'
+# relative (to PROJECT_ROOT) and absolute file locations
+#
+REL = {
+  version: 'VERSION',
+  gemspec: "#{PROJECT_NAME}.gemspec",
+  gemstat: 'gemspec.yaml',
+}
+ABS = {}
+REL.each { |sym, rel| ABS[sym] = File.join(PROJECT_ROOT, rel) }
 
-VERSION_FILE = File.join(PROJECT_ROOT, VERSION_FILENAME)
-GEMSPEC_FILE = File.join(PROJECT_ROOT, GEMSPEC_FILENAME)
-GEMSTAT_FILE = File.join(PROJECT_ROOT, GEMSTAT_FILENAME)
-
-def read_version
-  File.read(VERSION_FILE).chomp
+task :readable do
+  [:version, :gemstat].each { |f|
+    raise "can't read #{ABS[f]}" unless File.readable? ABS[f]
+    puts "#{REL[f]} is readable"
+  }
 end
 
-def read_yaml(filename)
-  YAML.load File.read(filename)
+task :writable do
+  [:version, :gemspec].each { |f|
+    raise "can't write #{ABS[f]}" unless File.writable? ABS[f]
+    puts "#{REL[f]} is writable"
+  }
 end
 
-def read_static_gemspec_data
-  read_yaml GEMSTAT_FILENAME
+def load_file sym
+  raise "Unknown sym: #{sym}" unless ABS[sym]
+  contents = File.read(ABS[sym])
+  case sym
+  when :gemstat
+    YAML.load contents
+  when :version
+    contents.chomp
+  else
+    contents
+  end
 end
 
-def write_version(version)
-  File.open(VERSION_FILE, 'w') { |f| f.write(version) }
+task :loadable do
+  [:version, :gemstat].each { |f|
+    load_file f
+    puts "#{REL[f]} is loadable"
+  }
 end
 
-def write_gemspec(gemspec_code)
-  File.open(GEMSPEC_FILE, 'w') { |f| f.write(gemspec_code) }
+task :version do
+  puts "#{PROJECT_NAME} #{load_file :version}"
 end
 
+task :sanity => [:readable, :loadable, :version]
+task :default => [:sanity, :writable]
+
+def file_flags(file)
+  flags = []
+  if File.exists?(file)
+    flags << :not_readable unless File.readable?(file)
+  else
+    flags << :does_not_exist
+  end
+  flags << :not_writable unless File.writable?(file)
+  flags << :ok if flags.empty?
+  flags
+end
+
+task :environment do
+  output = []
+  output << ['PROJECT_ROOT', PROJECT_ROOT]
+  output << ['PROJECT_NAME', PROJECT_NAME]
+
+  [:version, :gemspec, :gemstat].each { |f|
+    flags = file_flags(ABS[f]).map { |flag| flag.to_s.upcase }.join(', ')
+    output << [f.to_s.upcase << ' FILE', REL[f], "[#{flags}]"]
+  }
+  output << ['VERSION', load_file(:version)]
+
+  # column widths
+  lw = 'PROJECT_ROOT'.length
+  vw = PROJECT_ROOT.length
+  output.each { |(label, value, flags)|
+    puts [label.rjust(lw), value.ljust(vw)].join(': ') << " #{flags}"
+  }
+end
+
+# e.g. bump(:minor, '1.2.3') #=> '1.3.0'
+# only works for integers delimited by periods (dots)
+#
 def bump(position, version)
   pos = [:major, :minor, :patch].index(position) || position
   places = version.split('.')
@@ -46,22 +103,23 @@ def bump(position, version)
   }.join('.')
 end
 
-def file_flags(file)
-  flags = []
-  flags << :does_not_exist unless File.exists?(file)
-  flags << :not_readable unless File.readable?(file)
-  flags << :not_writable unless File.writable?(file)
-  flags << :ok if flags.empty?
-  flags
-end
+[:patch, :minor, :major].each { |v|
+  task "bump_#{v}" do
+    old_version = load_file :version
+    new_version = bump(v, old_version)
+    puts "bumping #{old_version}  to #{new_version}"
+    write_file :version, new_version
+  end
+}
+task :bump => [:bump_patch]
 
 def gemspec
-  static = read_static_gemspec_data
+  static = load_file(:gemstat)
   dependencies = static.delete('dependencies')
   col_width = static.keys.map { |s| s.length }.max
 
   # the entire reason for generating the gemspec
-  static['version'] = read_version
+  static['version'] = load_file(:version)
   static['date'] = Time.now.strftime("%Y-%m-%d")
 
   output = ['Gem::Specification.new do |s|']
@@ -81,84 +139,12 @@ def gemspec
   output.join("\n")
 end
 
-task :readable do
-  [VERSION_FILE, GEMSTAT_FILENAME].each { |path|
-    puts "checking that #{path} is readable"
-    raise "can't read #{path}" unless File.readable? path
-  }
-end
-
-task :loadable do
-  puts "loading gemspec.yaml"
-  static = read_static_gemspec_data
-  puts "#{PROJECT_NAME} version: #{read_version}"
-end
-
-task :writable do
-  [VERSION_FILE, GEMSPEC_FILE].each { |path|
-    puts "checking that #{path} is writable"
-    raise "can't write #{path}" unless File.writable? path
-  }
-end
-
-task :sanity => [:readable, :loadable]
-task :default => [:sanity, :writable]
-
-task :version do
-  puts "#{PROJECT_NAME} #{read_version}"
-end
-
-task :bump_patch do
-  old_version = read_version
-  new_version = bump(:patch, old_version)
-  puts "bumping #{old_version} to #{new_version}"
-  write_version new_version
-end
-
-task :bump_minor do
-  old_version = read_version
-  new_version = bump(:minor, old_version)
-  puts "bumping #{old_version} to #{new_version}"
-  write_version new_version
-end
-
-task :bump_major do
-  old_version = read_version
-  new_version = bump(:major, old_version)
-  puts "bumping #{old_version} to #{new_version}"
-  write_version new_version
-end
-
-task :environment do
-  # widths
-  lw = 'PROJECT_ROOT'.length
-  vw = PROJECT_ROOT.length
-  output = []
-  output << ['PROJECT_ROOT', PROJECT_ROOT]
-  output << ['PROJECT_NAME', PROJECT_NAME]
-  output << ['VERSION_FILE', VERSION_FILENAME, file_flags(VERSION_FILE)]
-  output << ['GEMSPEC_FILE', GEMSPEC_FILENAME, file_flags(GEMSPEC_FILE)]
-  output << ['GEMSTAT_FILE', GEMSTAT_FILENAME, file_flags(GEMSTAT_FILE)]
-  output << ['VERSION', read_version]
-
-  output.each { |(label, value, flags)|
-    # make sure flags is a string
-    case flags
-    when String
-      # do nothing
-    when Array
-      flags = flags.map { |flag| flag.to_s.upcase }.join(', ')
-      flags = "[#{flags}]"
-    else
-      flags = ''
-    end
-
-    puts [label.rjust(lw), value.ljust(vw)].join(': ') << " #{flags}"
-  }
-end
-
 task :show_gemspec do
   puts gemspec
+end
+
+def write_file sym, contents
+  File.open(ABS[sym], 'w') { |f| f.write(contents) }
 end
 
 task :gemspec do
@@ -167,7 +153,7 @@ task :gemspec do
   puts "writing gemspec file as below:"
   puts
   puts gemspec
-  write_gemspec gs
+  write_file :gemspec, gs
   puts
-  puts "wrote #{GEMSPEC_FILE}"
+  puts "wrote #{ABS[:gemspec]}"
 end

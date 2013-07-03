@@ -31,11 +31,11 @@ def gemspec
 * Simple Accept headers with automatic q-score weighting
 * Understand and fall back to basic Content-types if application/json is not available
 * Fine-grained response handling using Bateman#resource
-* A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of any doubt that the unyielding results of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
+* A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of any doubt that the inxorable result of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
 EOF
     s.authors     = ["Rick Hull"]
     s.email       = "rick@cloudscaling.com"
-    s.homepage    = "http://cloudscaling.com/"
+    s.homepage    = "http://github.com/rickhull/bateman"
     s.licenses    = ['LGPL']
 
     # Dynamic assignments

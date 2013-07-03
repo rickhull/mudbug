@@ -5,7 +5,7 @@ description: |
   * Simple Accept headers with automatic q-score weighting
   * Understand and fall back to basic Content-types if application/json is not available
   * Fine-grained response handling using Bateman#resource
-  * A winning combination of guts, salad, sea legs, and torpor will propel our spaceship to the pinochle of success.
+  * A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of a fair doubt that the unyielding results of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
 authors:
   - Rick Hull
 email: rick@cloudscaling.com
@@ -14,7 +14,7 @@ files:
   - examples/accepts_and_methods.rb
   - test/bateman.rb
   - README.md
-  - Rakefile.rb
+  - rakefile.rb
   - VERSION
   - gemspec.yaml
 homepage: http://cloudscaling.com/

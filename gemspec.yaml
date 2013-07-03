@@ -13,6 +13,10 @@ files:
   - lib/bateman.rb
   - examples/accepts_and_methods.rb
   - test/bateman.rb
+  - README.md
+  - Rakefile.rb
+  - VERSION
+  - gemspec.yaml
 homepage: http://cloudscaling.com/
 dependencies:
   runtime:

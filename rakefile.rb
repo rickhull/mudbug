@@ -2,10 +2,9 @@ require 'rubygems/package_task'
 
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
-VERSION_FILE = 'VERSION'
 
 def version
-  File.read(VERSION_FILE).chomp
+  File.read(File.join(PROJECT_ROOT, 'VERSION')).chomp
 end
 
 task :version do

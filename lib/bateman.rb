@@ -2,7 +2,10 @@ require 'rest-client'
 require 'json'
 
 class Bateman
-  VERSION = '0.3.0'
+  def self.version
+    vpath = File.join(File.dirname(__FILE__), '..', 'VERSION')
+    File.readlines(vpath).first.chomp
+  end
 
   class StatusCodeError < RuntimeError; end
 
@@ -73,7 +76,8 @@ class Bateman
   # e.g.
   # accept :json, :html  # Accept: application/json, text/html
   # accept nil           # remove Accept: header
-  # now adds q-scores automatically based on order
+  # Now adds q-scores automatically based on order
+  # Note: the hard work is done by the class method
   #
   def accept(*types)
     types = types.first if types.first.is_a?(Array)

@@ -3,17 +3,27 @@ require 'rubygems/package_task'
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
 VERSION_FILE = File.join(PROJECT_ROOT, 'VERSION')
+MANIFEST_FILE = File.join(PROJECT_ROOT, 'MANIFEST.txt')
 
 def version
   File.read(VERSION_FILE).chomp
+end
+
+def manifest
+  File.readlines(MANIFEST_FILE).map { |line| line.chomp }
 end
 
 task :version do
   puts "#{PROJECT_NAME} #{version}"
 end
 
+task :manifest do
+  puts manifest.join("\n")
+end
+
 def gemspec
   Gem::Specification.new do |s|
+    # Static assignments
     s.name        = "bateman"
     s.summary     = "A thin layer over rest-client that returns JSON objects"
     s.description = <<EOF
@@ -25,14 +35,11 @@ def gemspec
 EOF
     s.authors     = ["Rick Hull"]
     s.email       = "rick@cloudscaling.com"
-    s.files       = %w{lib/bateman.rb
-                       examples/accepts_and_methods.rb
-                       test/bateman.rb
-                       README.md
-                       rakefile.rb
-                       VERSION
-                    }
     s.homepage    = "http://cloudscaling.com/"
+    s.licenses    = ['LGPL']
+
+    # Dynamic assignments
+    s.files       = manifest
     s.version     = version
     s.date        = Time.now.strftime("%Y-%m-%d")
 

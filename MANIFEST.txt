@@ -1,0 +1,8 @@
+README.md
+VERSION
+rakefile.rb
+MANIFEST.txt
+LICENSE.txt
+lib/bateman.rb
+test/bateman.rb
+examples/accepts_and_methods.rb

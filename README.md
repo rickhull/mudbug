@@ -63,11 +63,6 @@ Call Bateman#resource directly for finer-grained response handling:
     # process resp.body
     # etc.
 
-Bateman, while focused on JSON, is aware of several content types:
-* :json - application/json
-* :html - text/html
-* :text - text/plain
-
 Here is the heart of the Bateman's [response processing](https://github.com/rickhull/bateman/blob/master/lib/bateman.rb#L37):
 
     # this structure declares what we support in the request Accept: header

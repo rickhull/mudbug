@@ -8,7 +8,6 @@ accepts = [:json, :html, :text, :xml]
 http_methods = [:get, :post, :put, :delete]
 
 path = '/'
-payload = { 'hi' => 'mom' }.to_json
 
 unless ARGV.shift == 'skip'
   puts
@@ -32,9 +31,13 @@ unless ARGV.shift == 'skip'
   puts
 end
 
+payload = { 'hi' => 'mom' }.to_json
+
 unless ARGV.shift == 'skip'
   puts "Checking HTTP methods across sites"
   puts "=================================="
+  puts "POST/PUT payload = #{payload.to_json}"
+  puts
   sites.each { |site|
     b = Bateman.new(site)
     url = "http://#{site}#{path}"

@@ -1,89 +1,53 @@
-require 'yaml'
+require 'rubygems/package_task'
 
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
+VERSION_FILE = 'VERSION'
 
-# relative (to PROJECT_ROOT) and absolute file locations
-#
-REL = {
-  version: 'VERSION',
-  gemspec: "#{PROJECT_NAME}.gemspec",
-  gemstat: 'gemspec.yaml',
-}
-ABS = {}
-REL.each { |sym, rel| ABS[sym] = File.join(PROJECT_ROOT, rel) }
-
-task :readable do
-  [:version, :gemstat].each { |f|
-    raise "can't read #{ABS[f]}" unless File.readable? ABS[f]
-    puts "#{REL[f]} is readable"
-  }
-end
-
-task :writable do
-  [:version, :gemspec].each { |f|
-    raise "can't write #{ABS[f]}" unless File.writable? ABS[f]
-    puts "#{REL[f]} is writable"
-  }
-end
-
-def load_file sym
-  raise "Unknown sym: #{sym}" unless ABS[sym]
-  contents = File.read(ABS[sym])
-  case sym
-  when :gemstat
-    YAML.load contents
-  when :version
-    contents.chomp
-  else
-    contents
-  end
-end
-
-task :loadable do
-  [:version, :gemstat].each { |f|
-    load_file f
-    puts "#{REL[f]} is loadable"
-  }
+def version
+  File.read(VERSION_FILE).chomp
 end
 
 task :version do
-  puts "#{PROJECT_NAME} #{load_file :version}"
+  puts "#{PROJECT_NAME} #{version}"
 end
 
-task :sanity => [:readable, :loadable, :version]
-task :default => [:sanity, :writable]
+def gemspec
+  Gem::Specification.new do |s|
+    s.name        = "bateman"
+    s.summary     = "A thin layer over rest-client that returns JSON objects"
+    s.description = <<EOF
+* GET, POST, PUT, and DELETE JSON payloads
+* Simple Accept headers with automatic q-score weighting
+* Understand and fall back to basic Content-types if application/json is not available
+* Fine-grained response handling using Bateman#resource
+* A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of a fair doubt that the unyielding results of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
+EOF
+    s.authors     = ["Rick Hull"]
+    s.email       = "rick@cloudscaling.com"
+    s.files       = %w{lib/bateman.rb
+                       examples/accepts_and_methods.rb
+                       test/bateman.rb
+                       README.md
+                       rakefile.rb
+                       VERSION
+                    }
+    s.homepage    = "http://cloudscaling.com/"
+    s.version     = version
+    s.date        = Time.now.strftime("%Y-%m-%d")
 
-def file_flags(file)
-  flags = []
-  if File.exists?(file)
-    flags << :not_readable unless File.readable?(file)
-  else
-    flags << :does_not_exist
+    s.add_runtime_dependency "rest-client", ["~> 1"]
+    s.add_runtime_dependency "json", ["~> 1"]
+    s.add_development_dependency "minitest", [">= 0"]
+    s.add_development_dependency "rake", [">= 0"]
   end
-  flags << :not_writable unless File.writable?(file)
-  flags << :ok if flags.empty?
-  flags
 end
 
-task :environment do
-  output = []
-  output << ['PROJECT_ROOT', PROJECT_ROOT]
-  output << ['PROJECT_NAME', PROJECT_NAME]
-
-  [:version, :gemspec, :gemstat].each { |f|
-    flags = file_flags(ABS[f]).map { |flag| flag.to_s.upcase }.join(', ')
-    output << [f.to_s.upcase << ' FILE', REL[f], "[#{flags}]"]
-  }
-  output << ['VERSION', load_file(:version)]
-
-  # column widths
-  lw = 'PROJECT_ROOT'.length
-  vw = PROJECT_ROOT.length
-  output.each { |(label, value, flags)|
-    puts [label.rjust(lw), value.ljust(vw)].join(': ') << " #{flags}"
-  }
+# i.e. task :package
+Gem::PackageTask.new(gemspec) do |pkg|
+  # stuff
 end
+task :build => [:package]
 
 # e.g. bump(:minor, '1.2.3') #=> '1.3.0'
 # only works for integers delimited by periods (dots)
@@ -112,42 +76,3 @@ end
   end
 }
 task :bump => [:bump_patch]
-
-def gemspec
-  static = load_file :gemstat
-  dependencies = static.delete('dependencies')
-  col_width = static.keys.map { |s| s.length }.max
-
-  # the entire reason for generating the gemspec
-  static['version'] = load_file :version
-  static['date'] = Time.now.strftime("%Y-%m-%d")
-
-  output = ['Gem::Specification.new do |s|']
-  static.each { |key, value|
-    output << "  s.#{key.ljust(col_width)} = #{value.inspect}"
-  }
-  output << ""
-  if dependencies
-    dependencies.each { |env, deps|
-      deps.each { |dep, versions|
-        method = "add_#{env}_dependency"
-        output << "  s.#{method} #{dep.inspect}, #{versions.inspect}"
-      }
-    }
-  end
-  output << "end"
-  output.join("\n")
-end
-
-task :show_gemspec do
-  puts gemspec
-end
-
-def write_file sym, contents
-  File.open(ABS[sym], 'w') { |f| f.write(contents) }
-end
-
-task :gemspec do
-  write_file :gemspec, gemspec
-  puts "wrote #{ABS[:gemspec]}"
-end

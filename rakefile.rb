@@ -43,10 +43,10 @@ EOF
     s.version     = version
     s.date        = Time.now.strftime("%Y-%m-%d")
 
-    s.add_runtime_dependency "rest-client", ["~> 1"]
-    s.add_runtime_dependency "json", ["~> 1"]
+    s.add_runtime_dependency  "rest-client", ["~> 1"]
+    s.add_runtime_dependency         "json", ["~> 1"]
     s.add_development_dependency "minitest", [">= 0"]
-    s.add_development_dependency "rake", [">= 0"]
+    s.add_development_dependency     "rake", [">= 0"]
   end
 end
 

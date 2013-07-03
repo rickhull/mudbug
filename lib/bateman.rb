@@ -4,7 +4,7 @@ require 'json'
 class Bateman
   def self.version
     vpath = File.join(File.dirname(__FILE__), '..', 'VERSION')
-    File.readlines(vpath).first.chomp
+    File.read(vpath).chomp
   end
 
   class StatusCodeError < RuntimeError; end

@@ -103,7 +103,7 @@ def bump(position, version)
   }.join('.')
 end
 
-[:patch, :minor, :major].each { |v|
+[:major, :minor, :patch].each { |v|
   task "bump_#{v}" do
     old_version = load_file :version
     new_version = bump(v, old_version)
@@ -148,12 +148,6 @@ def write_file sym, contents
 end
 
 task :gemspec do
-  gs = gemspec
-  puts
-  puts "writing gemspec file as below:"
-  puts
-  puts gemspec
   write_file :gemspec, gs
-  puts
   puts "wrote #{ABS[:gemspec]}"
 end

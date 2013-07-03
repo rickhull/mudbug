@@ -114,12 +114,12 @@ end
 task :bump => [:bump_patch]
 
 def gemspec
-  static = load_file(:gemstat)
+  static = load_file :gemstat
   dependencies = static.delete('dependencies')
   col_width = static.keys.map { |s| s.length }.max
 
   # the entire reason for generating the gemspec
-  static['version'] = load_file(:version)
+  static['version'] = load_file :version
   static['date'] = Time.now.strftime("%Y-%m-%d")
 
   output = ['Gem::Specification.new do |s|']
@@ -148,6 +148,6 @@ def write_file sym, contents
 end
 
 task :gemspec do
-  write_file :gemspec, gs
+  write_file :gemspec, gemspec
   puts "wrote #{ABS[:gemspec]}"
 end

@@ -2,9 +2,10 @@ require 'rubygems/package_task'
 
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
+VERSION_FILE = File.join(PROJECT_ROOT, 'VERSION')
 
 def version
-  File.read(File.join(PROJECT_ROOT, 'VERSION')).chomp
+  File.read(VERSION_FILE).chomp
 end
 
 task :version do
@@ -66,12 +67,16 @@ def bump(position, version)
   }.join('.')
 end
 
+def write_version new_version
+  File.open(VERSION_FILE, 'w') { |f| f.write(new_version) }
+end
+
 [:major, :minor, :patch].each { |v|
   task "bump_#{v}" do
-    old_version = load_file :version
+    old_version = version
     new_version = bump(v, old_version)
     puts "bumping #{old_version}  to #{new_version}"
-    write_file :version, new_version
+    write_version new_version
   end
 }
 task :bump => [:bump_patch]

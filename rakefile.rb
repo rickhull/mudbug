@@ -87,3 +87,16 @@ end
   end
 }
 task :bump => [:bump_patch]
+
+task :tag do
+  tagname = "v#{version}"
+  sh "git tag -a #{tagname} -m 'auto-tagged #{tagname} by Rake'"
+end
+
+task :release => [:tag, :package]
+task :release_patch => [:bump_patch, :tag, :package, :publish]
+task :release_minor => [:bump_minor, :tag, :package, :publish]
+task :release_major => [:bump_major, :tag, :package, :publish]
+
+task :publish do
+end

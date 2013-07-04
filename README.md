@@ -11,10 +11,21 @@ Features
 * Understand and fall back to basic Content-types if application/json is not provided
 * Fine-grained response handling using Mudbug#resource
 
+Installation
+------------
+Install the gem:
+
+    $ gem install mudbug
+
+Or, if using bundler, add to your Gemfile:
+
+    gem 'bateman'
+
 Quick Start
 -----------
 Initialize it with a host:
 
+    require 'mudbug'
     mb = Mudbug.new 'ip.jsontest.com'
 
 The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* **application/json** header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.

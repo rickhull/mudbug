@@ -89,6 +89,7 @@ task :bump => [:bump_patch]
 task :tag do
   tagname = "v#{version}"
   sh "git tag -a #{tagname} -m 'auto-tagged #{tagname} by Rake'"
+  sh "git push origin --tags"
 end
 
 task :release => [:bump_build, :tag, :publish]

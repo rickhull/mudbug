@@ -24,18 +24,18 @@ end
 task :build do
   spec = Gem::Specification.new do |s|
     # Static assignments
-    s.name        = "conduit"
+    s.name        = "mudbug"
     s.summary     = "A thin layer over rest-client that returns JSON objects"
     s.description = <<EOF
 * GET, POST, PUT, and DELETE JSON payloads
 * Simple Accept headers with automatic q-score weighting
 * Understand and fall back to basic Content-types if application/json is not available
-* Fine-grained response handling using Conduit#resource
+* Fine-grained response handling using Mudbug#resource
 * A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of any doubt that the inxorable result of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
 EOF
     s.authors     = ["Rick Hull"]
     s.email       = "rick@cloudscaling.com"
-    s.homepage    = "http://github.com/rickhull/conduit"
+    s.homepage    = "http://github.com/rickhull/mudbug"
     s.licenses    = ['LGPL']
 
     # Dynamic assignments

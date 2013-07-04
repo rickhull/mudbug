@@ -1,6 +1,6 @@
-Conduit
+Mudbug
 =======
-Conduit is a JSON-oriented, thin wrapper around [rest-client](https://github.com/rest-client/rest-client)'s [RestClient::Resource](https://github.com/rest-client/rest-client#usage-activeresource-style)
+Mudbug is a JSON-oriented, thin wrapper around [rest-client](https://github.com/rest-client/rest-client)'s [RestClient::Resource](https://github.com/rest-client/rest-client#usage-activeresource-style)
 
 Features
 --------
@@ -9,13 +9,13 @@ Features
 * Do The Right Thing 80% of the time every time
 * Easy *Accept:* headers
 * Understand and fall back to basic Content-types if application/json is not provided
-* Fine-grained response handling using Conduit#resource
+* Fine-grained response handling using Mudbug#resource
 
 Quick Start
 -----------
 Initialize it with a host:
 
-    b = Conduit.new 'ip.jsontest.com'
+    b = Mudbug.new 'ip.jsontest.com'
 
 The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* **application/json** header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
@@ -29,7 +29,7 @@ Usage
 -----
 You can pass through persistent [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
-    b = Conduit.new 'google.com', max_redirects: 3
+    b = Mudbug.new 'google.com', max_redirects: 3
 
 Declare what you accept: (optional, default shown)
 
@@ -42,28 +42,28 @@ You can pass through per-request [options to rest-client](https://github.com/res
 
 [RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through.  POST and PUT payloads will be sent as strings.  Non-string payloads will be converted to JSON by calling #to_json.
 
-    b = Conduit.new 'plus.google.com'
+    b = Mudbug.new 'plus.google.com'
     b.post '/', { 'hi' => 'mom' }, max_redirects: 3
 
     /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
     # lawyer up
     # hit gym
-    Conduit.new('facebook.com').delete '/'
+    Mudbug.new('facebook.com').delete '/'
 
      /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 
 Careful with that axe, Eugene
 -----------------------------
-Call Conduit#resource directly for finer-grained response handling:
+Call Mudbug#resource directly for finer-grained response handling:
 
-    resp = Conduit.new('google.com').resource('/').get
+    resp = Mudbug.new('google.com').resource('/').get
     # check resp.code
     # check resp.headers
     # process resp.body
     # etc.
 
-Here is the heart of the Conduit's [response processing](https://github.com/rickhull/conduit/blob/master/lib/conduit.rb#L37):
+Here is the heart of the Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L37):
 
     # this structure declares what we support in the request Accept: header
     # and defines automatic processing of the response based on the
@@ -86,7 +86,7 @@ Here is the heart of the Conduit's [response processing](https://github.com/rick
 
 Funny, that
 -----------
-Conduit works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
+Mudbug works best with webservers that respect the *Accept:* request header and provide proper *Content-type:* response headers.
 
 [RFC 2616](http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html)
 
@@ -94,5 +94,5 @@ Conduit works best with webservers that respect the *Accept:* request header and
 
 Examples
 --------
-* accepts_and_methods [sample script](https://github.com/rickhull/conduit/blob/master/examples/accepts_and_methods.rb)
-* accepts_and_methods [sample output](https://github.com/rickhull/conduit/blob/master/examples/accepts_and_methods.txt)
+* accepts_and_methods [sample script](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.rb)
+* accepts_and_methods [sample output](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.txt)

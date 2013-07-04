@@ -3,6 +3,6 @@ VERSION
 rakefile.rb
 MANIFEST.txt
 LICENSE.txt
-lib/conduit.rb
-test/conduit.rb
+lib/mudbug.rb
+test/mudbug.rb
 examples/accepts_and_methods.rb

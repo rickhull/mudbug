@@ -1,4 +1,4 @@
-rwh@ubuntuVM:~/git/conduit$ ruby examples/accepts_and_methods.rb
+rwh@ubuntuVM:~/git/mudbug$ ruby examples/accepts_and_methods.rb
 
 Checking Accepts across sites
 =============================

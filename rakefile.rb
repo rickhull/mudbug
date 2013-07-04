@@ -21,8 +21,8 @@ task :manifest do
   puts manifest.join("\n")
 end
 
-def gemspec
-  Gem::Specification.new do |s|
+task :build do
+  spec = Gem::Specification.new do |s|
     # Static assignments
     s.name        = "bateman"
     s.summary     = "A thin layer over rest-client that returns JSON objects"
@@ -48,13 +48,9 @@ EOF
     s.add_development_dependency "minitest", [">= 0"]
     s.add_development_dependency     "rake", [">= 0"]
   end
-end
 
-# i.e. task :package
-# builds the .gem and puts it in pkg/
-#
-Gem::PackageTask.new(gemspec) do |pkg|
-  # use default options
+  Gem::PackageTask.new(spec).define
+  Rake::Task["package"].invoke
 end
 
 # e.g. bump(:minor, '1.2.3') #=> '1.3.0'
@@ -106,11 +102,18 @@ task :verify_publish_credentials do
   raise "can't read #{creds}" unless File.readable?(fp)
 end
 
-task :publish => [:verify_publish_credentials, :package] do
+task :publish => [:verify_publish_credentials, :build] do
   fragment = "-#{version}.gem"
-  pkg_dir = File.join(PROJECT_DIR, 'pkg')
+  pkg_dir = File.join(PROJECT_ROOT, 'pkg')
   Dir.chdir(pkg_dir) {
     candidates = Dir.glob "*#{fragment}"
-    puts candidates.join
+    case candidates.length
+    when 0
+      raise "could not find .gem matching #{fragment}"
+    when 1
+      sh "gem push #{candidates.first}"
+    else
+      raise "multiple candidates found matching #{fragment}"
+    end
   }
 end

@@ -51,16 +51,17 @@ EOF
 end
 
 # i.e. task :package
+# builds the .gem and puts it in pkg/
+#
 Gem::PackageTask.new(gemspec) do |pkg|
-  # stuff
+  # use default options
 end
-task :build => [:package]
 
 # e.g. bump(:minor, '1.2.3') #=> '1.3.0'
 # only works for integers delimited by periods (dots)
 #
 def bump(position, version)
-  pos = [:major, :minor, :patch].index(position) || position
+  pos = [:major, :minor, :patch, :build].index(position) || position
   places = version.split('.')
   raise "bad position: #{pos} (for version #{version})" unless places[pos]
   places.map.with_index { |place, i|
@@ -78,7 +79,7 @@ def write_version new_version
   File.open(VERSION_FILE, 'w') { |f| f.write(new_version) }
 end
 
-[:major, :minor, :patch].each { |v|
+[:major, :minor, :patch, :build].each { |v|
   task "bump_#{v}" do
     old_version = version
     new_version = bump(v, old_version)
@@ -93,10 +94,23 @@ task :tag do
   sh "git tag -a #{tagname} -m 'auto-tagged #{tagname} by Rake'"
 end
 
-task :release => [:tag, :package]
-task :release_patch => [:bump_patch, :tag, :package, :publish]
-task :release_minor => [:bump_minor, :tag, :package, :publish]
-task :release_major => [:bump_major, :tag, :package, :publish]
+task :release => [:bump_build, :tag, :publish]
+task :release_patch => [:bump_patch, :tag, :publish]
+task :release_minor => [:bump_minor, :tag, :publish]
+task :release_major => [:bump_major, :tag, :publish]
 
-task :publish do
+task :verify_publish_credentials do
+  creds = '~/.gem/credentials'
+  fp = File.expand_path(creds)
+  raise "#{creds} does not exist" unless File.exists?(fp)
+  raise "can't read #{creds}" unless File.readable?(fp)
+end
+
+task :publish => [:verify_publish_credentials, :package] do
+  fragment = "-#{version}.gem"
+  pkg_dir = File.join(PROJECT_DIR, 'pkg')
+  Dir.chdir(pkg_dir) {
+    candidates = Dir.glob "*#{fragment}"
+    puts candidates.join
+  }
 end

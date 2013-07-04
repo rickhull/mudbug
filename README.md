@@ -15,11 +15,11 @@ Quick Start
 -----------
 Initialize it with a host:
 
-    b = Mudbug.new 'ip.jsontest.com'
+    mb = Mudbug.new 'ip.jsontest.com'
 
 The convenience methods *#get*, *#post*, *#put*, or *#delete* return the response body.  If the response has a *Content-type:* **application/json** header, then JSON parsing will be automatically performed on the response body, with the resulting object returned.
 
-    response = b.get '/'
+    response = mb.get '/'
     # => {"ip"=>"12.34.56.78"}
 
     response.class
@@ -29,21 +29,21 @@ Usage
 -----
 You can pass through persistent [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
-    b = Mudbug.new 'google.com', max_redirects: 3
+    mb = Mudbug.new 'google.com', max_redirects: 3
 
 Declare what you accept: (optional, default shown)
 
-    b.accept :json, :html, :text
+    mb.accept :json, :html, :text
 
 You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb)
 
-    b.get '/', max_redirects: 3
+    mb.get '/', max_redirects: 3
     # => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
 
 [RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through.  POST and PUT payloads will be sent as strings.  Non-string payloads will be converted to JSON by calling #to_json.
 
-    b = Mudbug.new 'plus.google.com'
-    b.post '/', { 'hi' => 'mom' }, max_redirects: 3
+    mb = Mudbug.new 'plus.google.com'
+    mb.post '/', { 'hi' => 'mom' }, max_redirects: 3
 
     /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
@@ -53,8 +53,8 @@ You can pass through per-request [options to rest-client](https://github.com/res
 
      /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 
-Careful with that axe, Eugene
------------------------------
+Digging Deeper
+--------------
 Call Mudbug#resource directly for finer-grained response handling:
 
     resp = Mudbug.new('google.com').resource('/').get

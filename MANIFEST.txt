@@ -3,6 +3,6 @@ VERSION
 rakefile.rb
 MANIFEST.txt
 LICENSE.txt
-lib/bateman.rb
-test/bateman.rb
+lib/conduit.rb
+test/conduit.rb
 examples/accepts_and_methods.rb

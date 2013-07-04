@@ -1,7 +1,7 @@
 require 'rest-client'
 require 'json'
 
-class Bateman
+class Conduit
   def self.version
     vpath = File.join(File.dirname(__FILE__), '..', 'VERSION')
     File.read(vpath).chomp

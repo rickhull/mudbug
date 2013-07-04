@@ -1,7 +1,7 @@
-# normally, just require 'bateman', but this will use your local version
+# normally, just require 'conduit', but this will use your local version
 # useful for development purposes
 #
-require_relative '../lib/bateman'
+require_relative '../lib/conduit'
 
 sites = %w{google.com yahoo.com microsoft.com amazon.com ibm.com reddit.com}
 accepts = [:json, :html, :text, :xml]
@@ -14,7 +14,7 @@ unless ARGV.shift == 'skip'
   puts "Checking Accepts across sites"
   puts "============================="
   sites.each { |site|
-    b = Bateman.new(site)
+    b = Conduit.new(site)
     url = "http://#{site}#{path}"
 
     accepts.each { |acp|
@@ -39,7 +39,7 @@ unless ARGV.shift == 'skip'
   puts "POST/PUT payload = #{payload.to_json}"
   puts
   sites.each { |site|
-    b = Bateman.new(site)
+    b = Conduit.new(site)
     url = "http://#{site}#{path}"
 
     http_methods.each { |meth|

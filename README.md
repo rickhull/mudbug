@@ -40,6 +40,7 @@ Usage
 -----
 You can pass through persistent [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb):
 
+    require 'mudbug'
     mb = Mudbug.new 'google.com', max_redirects: 3
 
 Declare what you accept: (optional, default shown)
@@ -74,7 +75,7 @@ Call Mudbug#resource directly for finer-grained response handling:
     # process resp.body
     # etc.
 
-Here is the heart of the Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L37):
+Here is the heart of the Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L45):
 
     # this structure declares what we support in the request Accept: header
     # and defines automatic processing of the response based on the

@@ -19,7 +19,7 @@ Install the gem:
 
 Or, if using bundler, add to your Gemfile:
 
-    gem 'bateman', '~> 0'
+    gem 'mudbug', '~> 0'
 
 Quick Start
 -----------

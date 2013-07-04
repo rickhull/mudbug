@@ -49,6 +49,9 @@ EOF
     s.add_development_dependency     "rake", [">= 0"]
   end
 
+  # we're definining the task at runtime, rather than requiretime
+  # so that the gemspec will reflect any version bumping since requiretime
+  #
   Gem::PackageTask.new(spec).define
   Rake::Task["package"].invoke
 end

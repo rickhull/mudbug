@@ -26,9 +26,7 @@ task :build do
     # Static assignments
     s.name        = "mudbug"
     s.summary     = "This hardy creature consumes JSON / REST APIs"
-    s.description = <<EOF
-GET, POST, PUT, and DELETE JSON payloads.  Easy Accept headers.  Fine-grained response handling using Mudbug#resource.  A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of unspoken doubt that the inxorable result of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
-EOF
+    s.description = "GET, POST, PUT, and DELETE JSON payloads. Easy Accept headers. Fine-grained response handling using Mudbug#resource."
     s.authors     = ["Rick Hull"]
     s.email       = "rick@cloudscaling.com"
     s.homepage    = "http://github.com/rickhull/mudbug"

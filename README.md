@@ -19,7 +19,7 @@ Install the gem:
 
 Or, if using bundler, add to your Gemfile:
 
-    gem 'bateman'
+    gem 'bateman', '~> 0'
 
 Quick Start
 -----------

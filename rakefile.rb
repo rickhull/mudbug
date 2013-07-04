@@ -25,7 +25,7 @@ task :build do
   spec = Gem::Specification.new do |s|
     # Static assignments
     s.name        = "mudbug"
-    s.summary     = "A thin layer over rest-client that returns JSON objects"
+    s.summary     = "This hardy creature consumes JSON / REST APIs"
     s.description = <<EOF
 GET, POST, PUT, and DELETE JSON payloads.  Easy Accept headers.  Fine-grained response handling using Mudbug#resource.  A winning combination of guts, salad, sea legs, and torpor will propel our fair spaceship beyond the pale shadow of unspoken doubt that the inxorable result of our redoubled efforts will counfound any chance at snatching defeat from the jars of whiskey.
 EOF

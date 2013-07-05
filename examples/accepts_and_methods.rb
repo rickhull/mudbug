@@ -20,9 +20,8 @@ unless ARGV.shift == 'skip'
     accepts.each { |acp|
       b.accept(acp)
 
-      print "GET #{url}  [#{acp}] "
+      puts "GET #{url}  [#{acp}]"
       b.get path
-      puts
     }
     puts
   }

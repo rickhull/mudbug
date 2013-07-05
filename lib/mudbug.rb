@@ -1,7 +1,11 @@
 require 'rest-client'
 require 'json'
+require 'lager'
 
 class Mudbug
+  extend Lager
+  log_to $stderr, :warn
+
   def self.version
     vpath = File.join(File.dirname(__FILE__), '..', 'VERSION')
     File.read(vpath).chomp
@@ -43,39 +47,43 @@ class Mudbug
   # do stuff based on response's Content-type
   #
   def self.process(resp, accept = nil)
-    case resp.code
-    when 200..299
-      # 2xx, OK
-    else
-      warn "proceeding with HTTP Status Code #{resp.code}"
+    @lager.debug { "response code: #{resp.code}" }
+    @lager.debug { "response headers:\n" << resp.raw_headers.inspect }
+
+    unless (200..299).include?(resp.code)
+      @lager.warn { "processing with HTTP Status Code #{resp.code}" }
     end
 
     # do you even Content-type, bro?
     ct = resp.headers[:content_type]
     unless ct
-      warn "process NOOP -- no response Content-type"
+      @lager.warn { "abort processing -- no response Content-type" }
       return resp.body
     end
 
     # warn if we got Content-type we didn't ask for
     ct, charset = ct.split(';').map { |s| s.strip }
-    warn "Asked for #{accept} but got #{ct}" if accept and !accept.include?(ct)
+    if accept and !accept.include?(ct)
+      @lager.warn { "Asked for #{accept} but got #{ct}" }
+    end
 
     # process the response for known content types
     CONTENT.each { |sym, hsh|
       return hsh[:proc].call(resp.body) if ct == hsh[:type]
     }
 
-    warn "process NOOP -- unrecognized Content-type: #{ct}"
-    return response.body
+    @lager.warn { "abort processing -- unrecognized Content-type: #{ct}" }
+    return resp.body
   end
 
   attr_reader :options
   attr_accessor :host
 
-  def initialize(host, options = nil)
+  def initialize(host, options = {})
+    # note, not yet logging at instance layer
+    # @lager = self.class.lager
     @host = host
-    @options = options || {}
+    @options = options
     accept :json, :html, :text
   end
 
@@ -98,10 +106,7 @@ class Mudbug
   #
   def resource(path, options = {})
     path = "/#{path}" unless path[0,1] == '/'
-    url = "http://#{@host}#{path}"
-    options = @options.merge(options)
-
-    RestClient::Resource.new(url, options)
+    RestClient::Resource.new "http://#{@host}#{path}", @options.merge(options)
   end
 
   # no payload

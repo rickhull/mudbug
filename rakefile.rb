@@ -1,4 +1,9 @@
 require 'rubygems/package_task'
+require 'rake/testtask'
+
+Rake::TestTask.new :test do |t|
+  t.pattern = 'test/*.rb'
+end
 
 PROJECT_ROOT = File.dirname(__FILE__)
 PROJECT_NAME = File.split(PROJECT_ROOT).last
@@ -9,19 +14,25 @@ def version
   File.read(VERSION_FILE).chomp
 end
 
-def manifest
-  File.readlines(MANIFEST_FILE).map { |line| line.chomp }
-end
-
 task :version do
   puts "#{PROJECT_NAME} #{version}"
+end
+
+task :tag => [:test] do
+  tagname = "v#{version}"
+  sh "git tag -a #{tagname} -m 'auto-tagged #{tagname} by Rake'"
+  sh "git push origin --tags"
+end
+
+def manifest
+  File.readlines(MANIFEST_FILE).map { |line| line.chomp }
 end
 
 task :manifest do
   puts manifest.join("\n")
 end
 
-task :build do
+task :build => [:test, :bump_build] do
   spec = Gem::Specification.new do |s|
     # Static assignments
     s.name        = "mudbug"
@@ -39,7 +50,7 @@ task :build do
 
     s.add_runtime_dependency  "rest-client", ["~> 1"]
     s.add_runtime_dependency         "json", ["~> 1"]
-    s.add_runtime_dependency        "lager", [">= 0"]
+    s.add_runtime_dependency        "lager", [">= 0.2"]
     s.add_development_dependency "minitest", [">= 0"]
     s.add_development_dependency     "rake", [">= 0"]
   end
@@ -85,17 +96,6 @@ end
 }
 task :bump => [:bump_patch]
 
-task :tag do
-  tagname = "v#{version}"
-  sh "git tag -a #{tagname} -m 'auto-tagged #{tagname} by Rake'"
-  sh "git push origin --tags"
-end
-
-task :release => [:bump_build, :tag, :publish]
-task :release_patch => [:bump_patch, :tag, :publish]
-task :release_minor => [:bump_minor, :tag, :publish]
-task :release_major => [:bump_major, :tag, :publish]
-
 task :verify_publish_credentials do
   creds = '~/.gem/credentials'
   fp = File.expand_path(creds)
@@ -103,7 +103,7 @@ task :verify_publish_credentials do
   raise "can't read #{creds}" unless File.readable?(fp)
 end
 
-task :publish => [:verify_publish_credentials, :build] do
+task :publish => [:verify_publish_credentials] do
   fragment = "-#{version}.gem"
   pkg_dir = File.join(PROJECT_ROOT, 'pkg')
   Dir.chdir(pkg_dir) {
@@ -118,3 +118,16 @@ task :publish => [:verify_publish_credentials, :build] do
     end
   }
 end
+
+task :gitpush do
+  # may prompt
+  sh "git push origin"
+  # this kills the automation
+  # use key-based auth?
+  # consider a timeout?
+end
+
+task :release => [:build, :tag, :publish, :gitpush]
+task :release_patch => [:bump_patch, :release]
+task :release_minor => [:bump_minor, :release]
+task :release_major => [:bump_major, :rel

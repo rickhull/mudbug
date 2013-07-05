@@ -39,6 +39,7 @@ task :build do
 
     s.add_runtime_dependency  "rest-client", ["~> 1"]
     s.add_runtime_dependency         "json", ["~> 1"]
+    s.add_runtime_dependency        "lager", [">= 0"]
     s.add_development_dependency "minitest", [">= 0"]
     s.add_development_dependency     "rake", [">= 0"]
   end

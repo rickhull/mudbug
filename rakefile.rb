@@ -130,4 +130,4 @@ end
 task :release => [:build, :tag, :publish, :gitpush]
 task :release_patch => [:bump_patch, :release]
 task :release_minor => [:bump_minor, :release]
-task :release_major => [:bump_major, :rel
+task :release_major => [:bump_major, :release]

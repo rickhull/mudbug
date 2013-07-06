@@ -72,7 +72,7 @@ class Mudbug
       return hsh[:proc].call(resp.body) if ct == hsh[:type]
     }
 
-    @lager.warn { "abort processing -- unrecognized Content-type: #{ct}" }
+    @lager.warn { "abandon processing -- unrecognized Content-type: #{ct}" }
     return resp.body
   end
 

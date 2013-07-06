@@ -1,8 +1,8 @@
-README.md
-VERSION
-rakefile.rb
 MANIFEST.txt
+VERSION
+README.md
 LICENSE.txt
+rakefile.rb
 lib/mudbug.rb
 test/mudbug.rb
 examples/accepts_and_methods.rb

@@ -75,7 +75,7 @@ Call Mudbug#resource directly for finer-grained response handling:
     # process resp.body
     # etc.
 
-Here is the heart of the Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L45):
+Here is the heart of Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L45):
 
     # this structure declares what we support in the request Accept: header
     # and defines automatic processing of the response based on the

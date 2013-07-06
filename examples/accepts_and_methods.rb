@@ -13,14 +13,14 @@ unless ARGV.shift == 'skip'
   puts "Checking Accepts across sites"
   puts "============================="
   sites.each { |site|
-    b = Mudbug.new(site)
+    mb = Mudbug.new(site)
     url = "http://#{site}#{path}"
 
     accepts.each { |acp|
-      b.accept(acp)
+      mb.accept(acp)
 
       puts "GET #{url}  [#{acp}]"
-      b.get path
+      mb.get path
     }
     puts
   }
@@ -37,7 +37,7 @@ unless ARGV.shift == 'skip'
   puts "POST/PUT payload = #{payload.to_json}"
   puts
   sites.each { |site|
-    b = Mudbug.new(site)
+    mb = Mudbug.new(site)
     url = "http://#{site}#{path}"
 
     http_methods.each { |meth|
@@ -46,7 +46,7 @@ unless ARGV.shift == 'skip'
 
       print "#{meth.to_s.upcase} #{url} "
       begin
-        b.send(*args)
+        mb.send(*args)
         puts
       rescue RuntimeError => e
         puts "#{e} (#{e.class})"

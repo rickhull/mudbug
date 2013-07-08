@@ -3,13 +3,13 @@ require 'json'
 require 'lager'
 
 class Mudbug
+  def self.version
+    file = File.expand_path('../../VERSION', __FILE__)
+    File.read(file).chomp
+  end
+
   extend Lager
   log_to $stderr, :warn
-
-  def self.version
-    vpath = File.join(File.dirname(__FILE__), '..', 'VERSION')
-    File.read(vpath).chomp
-  end
 
   class StatusCodeError < RuntimeError; end
 

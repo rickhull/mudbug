@@ -12,6 +12,7 @@ class Mudbug
   log_to $stderr, :warn
 
   class StatusCodeError < RuntimeError; end
+  class ContentTypeError < RuntimeError; end
 
   # this structure declares what we support in the request Accept: header
   # and defines automatic processing of the response based on the
@@ -45,6 +46,7 @@ class Mudbug
   end
 
   # do stuff based on response's Content-type
+  # accept is e.g. [:json, :html]
   #
   def self.process(resp, accept = nil)
     @lager.debug { "response code: #{resp.code}" }
@@ -57,14 +59,16 @@ class Mudbug
     # do you even Content-type, bro?
     ct = resp.headers[:content_type]
     unless ct
-      @lager.warn { "abort processing -- no response Content-type" }
+      @lager.warn { "abandon processing -- no response Content-type" }
       return resp.body
     end
 
-    # warn if we got Content-type we didn't ask for
+    # get the content-type
     ct, charset = ct.split(';').map { |s| s.strip }
+
+    # raise if we got Content-type we didn't ask for
     if accept and !accept.include?(ct)
-      @lager.warn { "Asked for #{accept} but got #{ct}" }
+      raise ContentTypeError, "Asked for #{accept} but got #{ct}"
     end
 
     # process the response for known content types

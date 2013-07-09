@@ -20,7 +20,11 @@ unless ARGV.shift == 'skip'
       mb.accept(acp)
 
       puts "GET #{url}  [#{acp}]"
-      mb.get path
+      begin
+        mb.get path
+      rescue RuntimeError => e
+        puts "#{e} (#{e.class})"
+      end
     }
     puts
   }

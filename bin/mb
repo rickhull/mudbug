@@ -8,6 +8,7 @@ USAGE:
   mb get|delete PATH       - GET or DELETE PATH
   mb post|put PATH PAYLOAD - POST or PUT PAYLOAD to PATH
 USAGE
+  exit 1
 end
 
 def conclude(msg)
@@ -17,59 +18,108 @@ end
 
 require 'mudbug'
 
-SAVE_FILE = File.expand_path '~/.mudbug'
+CFG_FILE = File.expand_path '~/.mudbug'
 FILE_EXPIRY = 3600 # seconds
 
 class Mudbug
-  def self.save host
-    raise "unable to write to #{SAVE_FILE}" unless File.writable? SAVE_FILE
-    File.open(SAVE_FILE, 'w') { |f| f.write host }
+  def self.save config
+    raise "unable to write to #{CFG_FILE}" unless File.writable? CFG_FILE
+    File.open(CFG_FILE, 'w') { |f| f.write config.to_json }
   end
 
   def self.load
-    File.open(SAVE_FILE, 'r') { |f| f.read } if self.fresh?
+    if self.fresh?
+      File.open(CFG_FILE, 'r') { |f| JSON.parse(f.read) rescue nil }
+    end
   end
 
   def self.fresh?
-    if File.exists?(SAVE_FILE) and File.readable?(SAVE_FILE)
-      Time.now - File.mtime(SAVE_FILE) < FILE_EXPIRY
+    File.exists?(CFG_FILE) and File.readable?(CFG_FILE) and
+      Time.now - File.mtime(CFG_FILE) < FILE_EXPIRY
+  end
+end
+
+CFG = Mudbug.load || {}
+
+# don't consume ARGV here
+cfg_cmd = ARGV.first
+
+if cfg_cmd
+  cfg_cmd = cfg_cmd.downcase
+
+  case cfg_cmd
+  when 'host', 'method', 'path', 'payload'
+    ARGV.shift # confirmed cfg_cmd, go ahead and shift
+    val = ARGV.shift
+    if val and !val.empty?
+      if val.downcase == 'nil'
+        CFG.delete cfg_cmd
+        Mudbug.save CFG
+        conclude "removed config for #{cfg_cmd}"
+      else
+        CFG[cfg_cmd] = val
+        Mudbug.save CFG
+      end
+    else
+      val = CFG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
     end
+    conclude "Using #{cfg_cmd} #{val}"
+  when 'config'
+    conclude Mudbug.load.inspect
   end
 end
 
-cmd = ARGV.shift or raise "provide a command"
+# set the host, always from CFG
+conclude "no host is set" unless CFG['host']
+mb = Mudbug.new CFG['host']
 
-case cmd.downcase
-when 'host'
-  host = ARGV.shift
-  if host and !host.empty?
-    Mudbug.save host
-  else
-    host = Mudbug.load or conclude "no host is set"
-  end
-  puts "Using host #{host}"
-  exit 0
-when 'get', 'post', 'put', 'del', 'delete'
-  host = Mudbug.load or conclude "no host is set"
-  path = ARGV.shift or usage "provide a path"
-  mb = Mudbug.new host
+# set the method, possibly from CLI args
+meth_cmd = ARGV.first
+case meth_cmd
+when 'get', 'post', 'put', 'delete', 'del'
+  ARGV.shift # confirmed meth_cmd, go ahead and shift
+  method = meth_cmd
 else
-  usage "unknown command #{cmd}"
+  method = CFG['method'] or usage "no method provided"
 end
 
-case cmd.downcase
+# set the path, possibly from CLI args
+path_cmd = ARGV.first
+case path_cmd
+when %r{^\/} # starts with a slash
+  ARGV.shift # confirmed path_cmd, go ahead and shift
+  path = path_cmd
+else
+  path = CFG['path'] or usage "no path provided"
+end
+
+case method
 when 'get'
   data = mb.get path
-  puts JSON.pretty_generate data
+  conclude JSON.pretty_generate data
 when 'del', 'delete'
   data = mb.delete path
-  puts JSON.pretty_generate data
+  conclude JSON.pretty_generate data
 when 'post', 'put', 'patch'
-  payload = ARGV.shift or usage "provide a payload"
-  if JSON.parse(payload)
-    data = mb.send(cmd.downcase, path, payload)
-    puts JSON.pretty_generate data
-  else
-    raise "could not parse payload:\n#{payload.inspect}"
+  # do nothing for now
+else
+  usage "Bad HTTP method #{method}"
+end
+
+# to get here, we must be doing POST, PUT, or PATCH
+# we need a payload
+
+payload = ARGV.first
+case payload
+when nil
+  payload = CFG['payload'] or usage "no payload provided"
+else
+  begin
+    JSON.parse payload
+  rescue
+    usage "could not parse payload:\n#{payload.inspect}"
   end
 end
+
+data = mb.send(method, path, payload)
+conclude JSON.pretty_generate data

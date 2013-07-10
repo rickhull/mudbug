@@ -7,6 +7,8 @@ Gem::Specification.new do |s|
   s.has_rdoc    = true
   s.description = "GET, POST, PUT, and DELETE JSON payloads. Easy Accept headers. Fine-grained response handling using Mudbug#resource."
 
+  s.executables << 'mb'
+
   s.add_runtime_dependency  "rest-client", ["~> 1"]
   s.add_runtime_dependency         "json", ["~> 1"]
   s.add_runtime_dependency        "lager", [">= 0.2"]

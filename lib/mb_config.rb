@@ -16,34 +16,37 @@ module MbConfig
     CFG.delete key
   end
 
+  # write CFG to FILE
+  #
   def self.save
-    raise "unable to write to #{FILE}" unless File.writable? FILE
     File.open(FILE, 'w') { |f| f.write CFG.to_json }
   end
 
+  # call reset as necessary
+  #
   def self.load
-    if available?
-      begin
-        File.open(FILE, 'r') { |f|
-          CFG.merge! JSON.parse f.read
-        }
-      rescue JSON::ParserError => e
-        puts "#{e} (#{e.class})"
-        puts "Resetting #{FILE}"
-        reset
-      end
+    reset unless File.exists?(FILE)
+    begin
+      File.open(FILE, 'r') { |f|
+        CFG.merge! JSON.parse f.read
+      }
+    rescue JSON::ParserError => e
+      puts "#{e} (#{e.class})"
+      puts "Resetting #{FILE}"
+      reset
+      # recursion; depends on .reset writing parseable JSON to stop
+      load
     end
   end
 
+  # write an empty hash/object
+  #
   def self.reset
-    raise "unable to write to #{FILE}" unless File.writable? FILE
     File.open(FILE, 'w') { |f| f.write '{}' }
   end
 
-  def self.available?
-    File.exists?(FILE) and File.readable?(FILE)
-  end
-
+  # dump the current CFG (may differ from FILE contents!)
+  #
   def self.dump
     JSON.pretty_generate CFG
   end

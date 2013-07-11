@@ -107,13 +107,7 @@ if cfg_cmd
     conclude "using accept: #{MbConfig['accept']}"
 
   when 'config'
-    if MbConfig.available?
-      conclude MbConfig.dump
-    else
-      puts "No config available"
-      MbConfig.reset
-      conclude "Created empty config file"
-    end
+    conclude MbConfig.dump
   end
 end
 

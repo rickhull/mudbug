@@ -4,10 +4,19 @@ def usage(msg = nil)
   puts "ERROR: #{msg}" if msg
   puts <<USAGE
 USAGE:
-  mb host [HOST]           - Set or display the current host
-  mb get|delete PATH       - GET or DELETE PATH
-  mb post|put PATH PAYLOAD - POST or PUT PAYLOAD to PATH
+  mb host|method|path|payload [VAL] - Set or display the current config item
+  mb accept [ACC1] [ACC2] [etc]     - Set or display the accept config item
+  mb config                         - Display the current config
+  mb [get|delete] [PATH]            - GET or DELETE PATH
+  mb [post|put] [PATH] [PAYLOAD]    - POST or PUT PAYLOAD to PATH
+
+  * A host must be configured for mb to operate
+  * method, path, and payload, if configured, can be omitted as CLI arguments
+  * accept is optional; valid values include json, html, text
 USAGE
+  puts
+  puts "CONFIG: #{Mudbug.load.inspect}" if Mudbug.fresh?
+
   exit 1
 end
 
@@ -41,6 +50,10 @@ end
 
 CFG = Mudbug.load || {}
 
+#
+# Stage 1: handle commands that manipulate CFG / CFG_FILE
+#
+
 # don't consume ARGV here
 cfg_cmd = ARGV.first
 
@@ -63,15 +76,52 @@ if cfg_cmd
     else
       val = CFG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
     end
-    conclude "Using #{cfg_cmd} #{val}"
+    conclude "Using #{cfg_cmd}: #{val}"
+
+  when 'accept'
+    ARGV.shift # confirmed cfg_cmd, go ahead and shift
+    accepts = []
+    until ARGV.empty?
+      accepts << ARGV.shift
+    end
+
+    case accepts.length
+    when 0
+      if CFG['accept']
+        conclude "Using accept: #{CFG['accept'].join(' ')}"
+      else
+        conclude "no accept is set"
+      end
+    when 1
+      # did they provide a quoted or CSV list? or pseudo-symbols with colons?
+      accepts = accepts.first.split(/[ ,:]+/).map { |s|
+        s.empty? ? nil : s
+      }.compact
+    else
+      accepts.map! { |s| s.gsub %r{[ ,:]+}, '' }
+    end
+    CFG['accept'] = accepts
+    Mudbug.save CFG
+    conclude "using accept: #{CFG['accept']}"
+
   when 'config'
     conclude Mudbug.load.inspect
   end
 end
 
+#
+# Done with manipulating CFG and CFG_FILE
+#
+
+#
+# Stage 2: create Mudbug based on CFG and command line options
+#
+
 # set the host, always from CFG
 conclude "no host is set" unless CFG['host']
 mb = Mudbug.new CFG['host']
+
+mb.accept CFG['accept'].map(&:to_sym) if CFG['accept']
 
 # set the method, possibly from CLI args
 meth_cmd = ARGV.first

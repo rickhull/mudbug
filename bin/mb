@@ -4,18 +4,19 @@ def usage(msg = nil)
   puts "ERROR: #{msg}" if msg
   puts <<USAGE
 USAGE:
-  mb host|method|path|payload [VAL] - Set or display the current config item
-  mb accept [ACC1] [ACC2] [etc]     - Set or display the accept config item
-  mb config                         - Display the current config
-  mb [get|delete] [PATH]            - GET or DELETE PATH
-  mb [post|put] [PATH] [PAYLOAD]    - POST or PUT PAYLOAD to PATH
+  mb host|method|path [VAL]      - Set or display current config item
+  mb accept [ACC1] [ACC2] [etc]  - Set or display accept types
+  mb payload [-]                 - Set (from STDIN) or display payload config
+  mb config                      - Display current config
+  mb [get|delete] [PATH]         - GET or DELETE PATH
+  mb [post|put] [PATH] [PAYLOAD] - POST or PUT PAYLOAD to PATH
 
   * A host must be configured for mb to operate
   * method, path, and payload, if configured, can be omitted as CLI arguments
   * accept is optional; valid values include json, html, text
 USAGE
   puts
-  puts "CONFIG: #{Mudbug.load.inspect}" if Mudbug.fresh?
+  puts "CONFIG: #{Mudbug.dump_config}" if Mudbug.fresh?
 
   exit 1
 end
@@ -46,6 +47,10 @@ class Mudbug
     File.exists?(CFG_FILE) and File.readable?(CFG_FILE) and
       Time.now - File.mtime(CFG_FILE) < FILE_EXPIRY
   end
+
+  def self.dump_config
+    JSON.pretty_generate load if fresh?
+  end
 end
 
 CFG = Mudbug.load || {}
@@ -61,7 +66,7 @@ if cfg_cmd
   cfg_cmd = cfg_cmd.downcase
 
   case cfg_cmd
-  when 'host', 'method', 'path', 'payload'
+  when 'host', 'method', 'path'
     ARGV.shift # confirmed cfg_cmd, go ahead and shift
     val = ARGV.shift
     if val and !val.empty?
@@ -77,6 +82,24 @@ if cfg_cmd
       val = CFG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
     end
     conclude "Using #{cfg_cmd}: #{val}"
+
+  when 'payload'
+    ARGV.shift # confirmed
+    val = ARGV.shift
+    if val and !val.empty?
+      case val.downcase
+      when '-'
+        CFG['payload'] = JSON.parse $stdin.read
+        Mudbug.save CFG
+      when 'nil'
+        CFG.delete 'payload'
+        Mudbug.save CFG
+        conclude "removed config for payload"
+      end
+    else
+      CFG['payload'] or conclude "no payload is set"
+    end
+    conclude "Using payload:\n#{JSON.pretty_generate CFG['payload']}"
 
   when 'accept'
     ARGV.shift # confirmed cfg_cmd, go ahead and shift
@@ -105,7 +128,11 @@ if cfg_cmd
     conclude "using accept: #{CFG['accept']}"
 
   when 'config'
-    conclude Mudbug.load.inspect
+    if Mudbug.fresh?
+      conclude Mudbug.dump_config
+    else
+      puts "no config available"
+    end
   end
 end
 
@@ -143,12 +170,26 @@ else
   path = CFG['path'] or usage "no path provided"
 end
 
+#
+# no payload yet; run GET and DELETE
+#
+
 case method
 when 'get'
-  data = mb.get path
+  begin
+    data = mb.get path
+  rescue RuntimeError => e
+    puts "#{e} - #{e.class}"
+    exit 1
+  end
   conclude JSON.pretty_generate data
 when 'del', 'delete'
-  data = mb.delete path
+  begin
+    data = mb.delete path
+  rescue RuntimeError => e
+    puts "#{e} - #{e.class}"
+    exit 1
+  end
   conclude JSON.pretty_generate data
 when 'post', 'put', 'patch'
   # do nothing for now
@@ -171,5 +212,11 @@ else
   end
 end
 
-data = mb.send(method, path, payload)
+begin
+  data = mb.send(method, path, payload)
+rescue RuntimeError => e
+  puts "#{e} - #{e.class}"
+  exit 1
+end
+
 conclude JSON.pretty_generate data

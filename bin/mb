@@ -16,7 +16,7 @@ USAGE:
   * accept is optional; valid values include json, html, text
 USAGE
   puts
-  puts "CONFIG: #{Mudbug.dump_config}" if Mudbug.fresh?
+  puts "CONFIG: #{MbConfig.dump}"
 
   exit 1
 end
@@ -26,37 +26,11 @@ def conclude(msg)
   exit 0
 end
 
-require 'mudbug'
-
-CFG_FILE = File.expand_path '~/.mudbug'
-FILE_EXPIRY = 3600 # seconds
-
-class Mudbug
-  def self.save config
-    raise "unable to write to #{CFG_FILE}" unless File.writable? CFG_FILE
-    File.open(CFG_FILE, 'w') { |f| f.write config.to_json }
-  end
-
-  def self.load
-    if self.fresh?
-      File.open(CFG_FILE, 'r') { |f| JSON.parse(f.read) rescue nil }
-    end
-  end
-
-  def self.fresh?
-    File.exists?(CFG_FILE) and File.readable?(CFG_FILE) and
-      Time.now - File.mtime(CFG_FILE) < FILE_EXPIRY
-  end
-
-  def self.dump_config
-    JSON.pretty_generate load if fresh?
-  end
-end
-
-CFG = Mudbug.load || {}
+require 'mb_config'
 
 #
-# Stage 1: handle commands that manipulate CFG / CFG_FILE
+# Config section: handle commands that manipulate MbConfig
+# Should exit in all cases with conclude()
 #
 
 # don't consume ARGV here
@@ -71,17 +45,21 @@ if cfg_cmd
     val = ARGV.shift
     if val and !val.empty?
       if val.downcase == 'nil'
-        CFG.delete cfg_cmd
-        Mudbug.save CFG
+        MbConfig.delete cfg_cmd
+        MbConfig.save
         conclude "removed config for #{cfg_cmd}"
       else
-        CFG[cfg_cmd] = val
-        Mudbug.save CFG
+        MbConfig[cfg_cmd] = val
+        MbConfig.save
       end
     else
-      val = CFG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
+      val = MbConfig[cfg_cmd] or conclude "no #{cfg_cmd} is set"
     end
     conclude "Using #{cfg_cmd}: #{val}"
+
+  when 'reset'
+    MbConfig.reset
+    conclude "config was reset"
 
   when 'payload'
     ARGV.shift # confirmed
@@ -89,17 +67,17 @@ if cfg_cmd
     if val and !val.empty?
       case val.downcase
       when '-'
-        CFG['payload'] = JSON.parse $stdin.read
-        Mudbug.save CFG
+        MbConfig['payload'] = JSON.parse $stdin.read
+        MbConfig.save
       when 'nil'
-        CFG.delete 'payload'
-        Mudbug.save CFG
+        MbConfig.delete 'payload'
+        MbConfig.save
         conclude "removed config for payload"
       end
     else
-      CFG['payload'] or conclude "no payload is set"
+      MbConfig['payload'] or conclude "no payload is set"
     end
-    conclude "Using payload:\n#{JSON.pretty_generate CFG['payload']}"
+    conclude "Using payload:\n#{JSON.pretty_generate MbConfig['payload']}"
 
   when 'accept'
     ARGV.shift # confirmed cfg_cmd, go ahead and shift
@@ -110,8 +88,8 @@ if cfg_cmd
 
     case accepts.length
     when 0
-      if CFG['accept']
-        conclude "Using accept: #{CFG['accept'].join(' ')}"
+      if MbConfig['accept']
+        conclude "Using accept: #{MbConfig['accept'].join(' ')}"
       else
         conclude "no accept is set"
       end
@@ -123,32 +101,34 @@ if cfg_cmd
     else
       accepts.map! { |s| s.gsub %r{[ ,:]+}, '' }
     end
-    CFG['accept'] = accepts
-    Mudbug.save CFG
-    conclude "using accept: #{CFG['accept']}"
+    MbConfig['accept'] = accepts
+    MbConfig.save
+    conclude "using accept: #{MbConfig['accept']}"
 
   when 'config'
-    if Mudbug.fresh?
-      conclude Mudbug.dump_config
+    if MbConfig.available?
+      conclude MbConfig.dump
     else
-      puts "no config available"
+      puts "No config available"
+      MbConfig.reset
+      conclude "Created empty config file"
     end
   end
 end
 
 #
-# Done with manipulating CFG and CFG_FILE
+# Done with manipulating MbConfig
 #
 
 #
-# Stage 2: create Mudbug based on CFG and command line options
+# Stage 2: create Mudbug based on MbConfig and command line options
 #
 
-# set the host, always from CFG
-conclude "no host is set" unless CFG['host']
-mb = Mudbug.new CFG['host']
+# set the host, always from MbConfig
+conclude "no host is set" unless MbConfig['host']
+mb = Mudbug.new MbConfig['host']
 
-mb.accept CFG['accept'].map(&:to_sym) if CFG['accept']
+mb.accept MbConfig['accept'].map(&:to_sym) if MbConfig['accept']
 
 # set the method, possibly from CLI args
 meth_cmd = ARGV.first
@@ -157,7 +137,7 @@ when 'get', 'post', 'put', 'delete', 'del'
   ARGV.shift # confirmed meth_cmd, go ahead and shift
   method = meth_cmd
 else
-  method = CFG['method'] or usage "no method provided"
+  method = MbConfig['method'] or usage "no method provided"
 end
 
 # set the path, possibly from CLI args
@@ -167,7 +147,7 @@ when %r{^\/} # starts with a slash
   ARGV.shift # confirmed path_cmd, go ahead and shift
   path = path_cmd
 else
-  path = CFG['path'] or usage "no path provided"
+  path = MbConfig['path'] or usage "no path provided"
 end
 
 #
@@ -203,7 +183,7 @@ end
 payload = ARGV.first
 case payload
 when nil
-  payload = CFG['payload'] or usage "no payload provided"
+  payload = MbConfig['payload'] or usage "no payload provided"
 when '-'
   payload = $stdin.read
   begin

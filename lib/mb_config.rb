@@ -12,7 +12,7 @@ module MbConfig
     CFG[key] = value
   end
 
-  def delete key
+  def self.delete key
     CFG.delete key
   end
 

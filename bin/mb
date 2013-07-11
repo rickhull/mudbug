@@ -9,7 +9,7 @@ USAGE:
   mb payload [-]                 - Set (from STDIN) or display payload config
   mb config                      - Display current config
   mb [get|delete] [PATH]         - GET or DELETE PATH
-  mb [post|put] [PATH] [PAYLOAD] - POST or PUT PAYLOAD to PATH
+  mb [post|put] [PATH] -         - POST or PUT payload (STDIN) to PATH
 
   * A host must be configured for mb to operate
   * method, path, and payload, if configured, can be omitted as CLI arguments
@@ -204,7 +204,8 @@ payload = ARGV.first
 case payload
 when nil
   payload = CFG['payload'] or usage "no payload provided"
-else
+when '-'
+  payload = $stdin.read
   begin
     JSON.parse payload
   rescue

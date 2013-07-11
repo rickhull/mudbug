@@ -4,12 +4,13 @@ def usage(msg = nil)
   puts "ERROR: #{msg}" if msg
   puts <<USAGE
 USAGE:
+  mb [get|delete] [PATH]         - GET or DELETE PATH
+  mb [post|put] [PATH] -         - POST or PUT payload (STDIN) to PATH
+
   mb host|method|path [VAL]      - Set or display current config item
   mb accept [ACC1] [ACC2] [etc]  - Set or display accept types
   mb payload [-]                 - Set (from STDIN) or display payload config
   mb config                      - Display current config
-  mb [get|delete] [PATH]         - GET or DELETE PATH
-  mb [post|put] [PATH] -         - POST or PUT payload (STDIN) to PATH
 
   * A host must be configured for mb to operate
   * method, path, and payload, if configured, can be omitted as CLI arguments
@@ -125,7 +126,7 @@ end
 #
 
 # set the host, always from MbConfig
-conclude "no host is set" unless MbConfig['host']
+usage "no host is set" unless MbConfig['host']
 mb = Mudbug.new MbConfig['host']
 
 mb.accept MbConfig['accept'].map(&:to_sym) if MbConfig['accept']

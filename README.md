@@ -19,7 +19,7 @@ Install the gem:
 
 Or, if using bundler, add to your Gemfile:
 
-    gem 'mudbug', '~> 0'
+    gem 'mudbug', '~> 0.6'
 
 Quick Start
 -----------

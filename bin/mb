@@ -29,6 +29,11 @@ def conclude(msg)
   exit 0
 end
 
+def display(maybe_json)
+  return maybe_json if maybe_json.is_a?(String)
+  JSON.pretty_generate maybe_json
+end
+
 #
 # Config section: handle commands that manipulate MbConfig
 # Should exit in all cases with conclude()
@@ -159,7 +164,7 @@ when 'get', 'delete'
     puts "#{e} - #{e.class}"
     exit 1
   end
-  conclude JSON.pretty_generate data
+  conclude display(data)
 when 'post', 'put', 'patch'
   # do nothing for now
 else
@@ -191,4 +196,4 @@ rescue RuntimeError => e
   exit 1
 end
 
-conclude JSON.pretty_generate data
+conclude display(data)

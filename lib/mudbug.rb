@@ -128,9 +128,10 @@ class Mudbug
   #
   [:post, :put].each { |meth|
     define_method(meth) { |path, payload, options={}|
+      options[:content_type] ||= CONTENT[:json][:type]
       payload = payload.to_json unless payload.is_a?(String)
       res = resource(path, options)
-      self.class.process(res.send(meth, payload), res.heads[:accept])
+      self.class.process(res.send(meth, payload), res.headers[:accept])
     }
   }
 end

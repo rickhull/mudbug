@@ -26,16 +26,21 @@ module MbConfig
   #
   def self.load
     reset unless File.exists?(FILE)
+    rescues = 0
     begin
       File.open(FILE, 'r') { |f|
         CFG.merge! JSON.parse f.read
       }
     rescue JSON::ParserError => e
+      rescues += 1
       puts "#{e} (#{e.class})"
-      puts "Resetting #{FILE}"
-      reset
-      # recursion; depends on .reset writing parseable JSON to stop
-      load
+      if rescues < 2
+        puts "Resetting #{FILE}"
+        reset
+        retry
+      end
+      Mudbug.lager.fatal { "MbConfig.load failed!" }
+      exit 1
     end
   end
 

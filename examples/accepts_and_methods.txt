@@ -2,53 +2,53 @@ rwh@ubuntuVM:~/git/mudbug$ ruby examples/accepts_and_methods.rb
 
 Checking Accepts across sites
 =============================
-GET http://google.com/  [json] Asked for application/json but got text/html
-
+GET http://google.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://google.com/  [html]
-GET http://google.com/  [text] Asked for text/plain but got text/html
+GET http://google.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://google.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
-GET http://google.com/  [xml] Asked for application/xml but got text/html
-
-
-GET http://yahoo.com/  [json] Asked for application/json but got text/html
-
+GET http://yahoo.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://yahoo.com/  [html]
-GET http://yahoo.com/  [text] Asked for text/plain but got text/html
+GET http://yahoo.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://yahoo.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
-GET http://yahoo.com/  [xml] Asked for application/xml but got text/html
-
-
-GET http://microsoft.com/  [json] Asked for application/json but got text/html
-
+GET http://microsoft.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://microsoft.com/  [html]
-GET http://microsoft.com/  [text] Asked for text/plain but got text/html
+GET http://microsoft.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://microsoft.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
-GET http://microsoft.com/  [xml] Asked for application/xml but got text/html
-
-
-GET http://amazon.com/  [json] Asked for application/json but got text/html
-
+GET http://amazon.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://amazon.com/  [html]
-GET http://amazon.com/  [text] Asked for text/plain but got text/html
+GET http://amazon.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://amazon.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
-GET http://amazon.com/  [xml] Asked for application/xml but got text/html
-
-
-GET http://ibm.com/  [json] Asked for application/json but got text/html
-
+GET http://ibm.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://ibm.com/  [html]
-GET http://ibm.com/  [text] Asked for text/plain but got text/html
+GET http://ibm.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://ibm.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
-GET http://ibm.com/  [xml] Asked for application/xml but got text/html
-
-
-GET http://reddit.com/  [json] Asked for application/json but got text/html
-
+GET http://reddit.com/  [json]
+Asked for application/json but got text/html (Mudbug::ContentTypeError)
 GET http://reddit.com/  [html]
-GET http://reddit.com/  [text] Asked for text/plain but got text/html
-
-GET http://reddit.com/  [xml] Asked for application/xml but got text/html
-
+GET http://reddit.com/  [text]
+Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+GET http://reddit.com/  [xml]
+Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
 
 
@@ -64,7 +64,7 @@ DELETE http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 GET http://yahoo.com/
 POST http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 PUT http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
-DELETE http://yahoo.com/ 403 Forbidden (RestClient::Forbidden)
+DELETE http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 GET http://microsoft.com/
 POST http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
@@ -73,7 +73,7 @@ DELETE http://microsoft.com/ 404 Resource Not Found: The resource you are lookin
 
 GET http://amazon.com/
 POST http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
-PUT http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
 DELETE http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 GET http://ibm.com/

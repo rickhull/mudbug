@@ -84,8 +84,6 @@ class Mudbug
   attr_accessor :host
 
   def initialize(host, options = {})
-    # note, not yet logging at instance layer
-    # @lager = self.class.lager
     @host = host
     @options = options
     accept :json, :html, :text

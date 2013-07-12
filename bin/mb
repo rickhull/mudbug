@@ -1,8 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'mb_config'
+
 def usage(msg = nil)
   puts "ERROR: #{msg}" if msg
-  puts <<USAGE
+  puts <<EOF
 USAGE:
   mb [get|delete] [PATH]         - GET or DELETE PATH
   mb [post|put] [PATH] -         - POST or PUT payload (STDIN) to PATH
@@ -15,7 +17,7 @@ USAGE:
   * A host must be configured for mb to operate
   * method, path, and payload, if configured, can be omitted as CLI arguments
   * accept is optional; valid values include json, html, text
-USAGE
+EOF
   puts
   puts "CONFIG: #{MbConfig.dump}"
 
@@ -26,8 +28,6 @@ def conclude(msg)
   puts msg
   exit 0
 end
-
-require 'mb_config'
 
 #
 # Config section: handle commands that manipulate MbConfig
@@ -113,22 +113,21 @@ end
 
 #
 # Done with manipulating MbConfig
-#
-
-#
-# Stage 2: create Mudbug based on MbConfig and command line options
+# Create Mudbug, determine method and path - from MbConfig and cmd line args
 #
 
 # set the host, always from MbConfig
+#
 usage "no host is set" unless MbConfig['host']
 mb = Mudbug.new MbConfig['host']
 
 mb.accept MbConfig['accept'].map(&:to_sym) if MbConfig['accept']
 
 # set the method, possibly from CLI args
+#
 meth_cmd = ARGV.first
 case meth_cmd
-when 'get', 'post', 'put', 'delete', 'del'
+when 'get', 'post', 'put', 'delete'# , 'patch'   # Soon(tm)
   ARGV.shift # confirmed meth_cmd, go ahead and shift
   method = meth_cmd
 else
@@ -136,6 +135,7 @@ else
 end
 
 # set the path, possibly from CLI args
+#
 path_cmd = ARGV.first
 case path_cmd
 when %r{^\/} # starts with a slash
@@ -146,21 +146,15 @@ else
 end
 
 #
-# no payload yet; run GET and DELETE
+# Are we there yet?
 #
 
+# no payload yet; we can run GET and DELETE
+#
 case method
-when 'get'
+when 'get', 'delete'
   begin
-    data = mb.get path
-  rescue RuntimeError => e
-    puts "#{e} - #{e.class}"
-    exit 1
-  end
-  conclude JSON.pretty_generate data
-when 'del', 'delete'
-  begin
-    data = mb.delete path
+    data = mb.send(method, path)
   rescue RuntimeError => e
     puts "#{e} - #{e.class}"
     exit 1
@@ -173,8 +167,8 @@ else
 end
 
 # to get here, we must be doing POST, PUT, or PATCH
-# we need a payload
-
+# we need a payload.  from MbConfig or STDIN
+#
 payload = ARGV.first
 case payload
 when nil
@@ -188,6 +182,8 @@ when '-'
   end
 end
 
+# run POST, PUT, PATCH
+#
 begin
   data = mb.send(method, path, payload)
 rescue RuntimeError => e

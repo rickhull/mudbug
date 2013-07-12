@@ -68,13 +68,13 @@ mb.get '/', max_redirects: 3
 mb = Mudbug.new 'plus.google.com'
 mb.post '/', { 'hi' => 'mom' }, max_redirects: 3
 
-/path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
+# /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
 # lawyer up
 # hit gym
 Mudbug.new('facebook.com').delete '/'
 
-/path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
+# /path/to/lib/restclient/abstract_response.rb:39:in `return!': 301 Moved Permanently (RestClient::MovedPermanently)
 ```
 
 Digging Deeper

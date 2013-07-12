@@ -1,11 +1,12 @@
-require 'buildar/tasks'
+require 'buildar'
 require 'rake/testtask'
 
-Buildar.conf(__FILE__) do |b|
-                b.name = 'mudbug'
-    b.use_gemspec_file = true
-    b.use_version_file = true
-    b.version_filename = 'VERSION'
-             b.use_git = true
-  b.publish[:rubygems] = true
+Buildar.new do |b|
+  b.gemspec_file = 'mudbug.gemspec'
+  b.version_file = 'VERSION'
+  b.use_git = true
+end
+
+Rake::TestTask.new :test do |t|
+  t.pattern = 'test/*.rb'
 end

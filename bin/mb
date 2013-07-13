@@ -101,9 +101,7 @@ if cfg_cmd
       end
     when 1
       # did they provide a quoted or CSV list? or pseudo-symbols with colons?
-      accepts = accepts.first.split(/[ ,:]+/).map { |s|
-        s.empty? ? nil : s
-      }.compact
+      accepts = accepts.first.split(/[ ,:]+/).select { |s| !s.empty? }
     else
       accepts.map! { |s| s.gsub %r{[ ,:]+}, '' }
     end

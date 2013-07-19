@@ -29,11 +29,6 @@ def conclude(msg)
   exit 0
 end
 
-def display(maybe_json)
-  return maybe_json if maybe_json.is_a?(String)
-  JSON.pretty_generate maybe_json
-end
-
 #
 # Config section: handle commands that manipulate MbConfig
 # Should exit in all cases with conclude()
@@ -115,7 +110,7 @@ if cfg_cmd
 end
 
 #
-# Done with manipulating MbConfig
+# OK, we're not manipulating MbConfig
 # Create Mudbug, determine method and path - from MbConfig and cmd line args
 #
 
@@ -179,4 +174,5 @@ rescue RuntimeError => e
   exit 1
 end
 
-conclude display(data)
+data = JSON.pretty_generate data unless data.is_a? String
+conclude data

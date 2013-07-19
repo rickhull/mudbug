@@ -40,7 +40,7 @@ module MbConfig
         retry
       end
       Mudbug.lager.fatal { "MbConfig.load failed!" }
-      exit 1
+      raise e
     end
   end
 

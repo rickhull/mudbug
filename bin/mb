@@ -14,9 +14,10 @@ USAGE:
   mb payload [-]                 - Set (from STDIN) or display payload config
   mb config                      - Display current config
 
-  * A host must be configured for mb to operate
-  * method, path, and payload, if configured, can be omitted as CLI arguments
-  * accept is optional; valid values include json, html, text
+  * A `host` must be configured for mb to operate
+  * `method`, `path`, and `payload`, if configured, are not required arguments
+  * Set a config item to nil in order to remove it
+  * `accept` is optional; valid values include json, html, text
 EOF
   puts
   puts "CONFIG: #{MbConfig.dump}"

@@ -128,22 +128,18 @@ mb.accept MbConfig['accept'].map(&:to_sym) if MbConfig['accept']
 
 # set the method, possibly from CLI args
 #
-meth_cmd = ARGV.first
-case meth_cmd
+case ARGV.first
 when 'get', 'post', 'put', 'delete'# , 'patch'   # Soon(tm)
-  ARGV.shift # confirmed meth_cmd, go ahead and shift
-  method = meth_cmd
+  method = ARGV.shift
 else
   method = MbConfig['method'] or usage "no method provided"
 end
 
 # set the path, possibly from CLI args
 #
-path_cmd = ARGV.first
-case path_cmd
+case ARGV.first
 when %r{^\/} # starts with a slash
-  ARGV.shift # confirmed path_cmd, go ahead and shift
-  path = path_cmd
+  path = ARGV.shift
 else
   path = MbConfig['path'] or usage "no path provided"
 end

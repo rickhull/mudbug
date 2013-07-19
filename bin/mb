@@ -152,43 +152,35 @@ end
 # Are we there yet?
 #
 
-# no payload yet; we can run GET and DELETE
+# gather payload as required
+# create args for sending the request
 #
 case method
 when 'get', 'delete'
-  begin
-    data = mb.send(method, path)
-  rescue RuntimeError => e
-    puts "#{e} - #{e.class}"
-    exit 1
-  end
-  conclude display(data)
+  args = [method, path]
 when 'post', 'put', 'patch'
-  # do nothing for now
+  # get payload
+  case ARGV.first
+  when nil
+    payload = MbConfig['payload'] or usage "no payload provided"
+  when '-'
+    begin
+      payload = JSON.parse $stdin.read
+    rescue
+      usage "could not parse payload:\n#{payload.inspect}"
+    end
+  end
+  args = [method, path, payload]
 else
   usage "Bad HTTP method #{method}"
 end
 
-# to get here, we must be doing POST, PUT, or PATCH
-# we need a payload.  from MbConfig or STDIN
 #
-payload = ARGV.first
-case payload
-when nil
-  payload = MbConfig['payload'] or usage "no payload provided"
-when '-'
-  payload = $stdin.read
-  begin
-    JSON.parse payload
-  rescue
-    usage "could not parse payload:\n#{payload.inspect}"
-  end
-end
+# finally!
+#
 
-# run POST, PUT, PATCH
-#
 begin
-  data = mb.send(method, path, payload)
+  data = mb.send(*args)
 rescue RuntimeError => e
   puts "#{e} - #{e.class}"
   exit 1

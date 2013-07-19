@@ -8,3 +8,4 @@ lib/mudbug.rb
 lib/mb_config.rb
 test/mudbug.rb
 examples/accepts_and_methods.rb
+bin/mudbug.rb

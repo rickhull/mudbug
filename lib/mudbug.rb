@@ -105,10 +105,18 @@ class Mudbug
 
   # use this method directly if you want finer-grained request and response
   # handling
+  # supports /path/to/res, path/to/res, http://host.com/path/to/res
   #
   def resource(path, options = {})
-    path = "/#{path}" unless path[0,1] == '/'
-    RestClient::Resource.new "http://#{@host}#{path}", @options.merge(options)
+    uri = URI.parse(path)
+    if uri.host # a full URL was passed in
+      @host = uri.host
+      url = uri.to_s
+    else
+      path = "/#{path}" unless path[0,1] == '/'
+      url = "http://#{@host}#{path}"
+    end
+    RestClient::Resource.new url, @options.merge(options)
   end
 
   # no payload

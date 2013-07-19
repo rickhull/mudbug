@@ -148,10 +148,7 @@ else
   path = MbConfig['path'] or usage "no path provided"
 end
 
-#
-# Are we there yet?
-#
-
+# determine method
 # gather payload as required
 # create args for sending the request
 #

@@ -1,13 +1,12 @@
 #!/usr/bin/env ruby
 
-#require 'mb_config'
 require 'dotcfg'
 require 'mudbug'
 
 CONFIG = DotCfg.new '~/.mudbug', :json
 
 def usage(msg = nil)
-  puts "ERROR: #{msg}" if msg
+  print "ERROR: #{msg}\n\n" if msg
   puts <<EOF
 USAGE:
   mb [get|delete] [PATH]         - GET or DELETE PATH

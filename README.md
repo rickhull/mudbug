@@ -14,13 +14,13 @@ Features
 Installation
 ------------
 Install the gem:
-
-    $ gem install mudbug
-
-Or, if using bundler, add to your Gemfile:
-
-    gem 'mudbug', '~> 0.6'
-
+```
+$ gem install mudbug       # sudo as necessary
+```
+Or, if using [Bundler](http://bundler.io/), add to your Gemfile:
+```ruby
+gem 'mudbug', '~> 0.6'
+```
 Quick Start
 -----------
 Initialize it with a host:

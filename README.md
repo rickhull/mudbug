@@ -89,7 +89,7 @@ resp = Mudbug.new('google.com').resource('/').get
 # etc.
 ```
 
-Here is the heart of Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L45):
+Here is the heart of Mudbug's [response processing](https://github.com/rickhull/mudbug/blob/master/lib/mudbug.rb#L51):
 
 ```ruby
 # this structure declares what we support in the request Accept: header

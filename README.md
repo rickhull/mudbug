@@ -116,8 +116,7 @@ Careful with that axe, Eugene.
 
 Examples
 --------
-* accepts_and_methods [sample script](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.rb)
-* accepts_and_methods [sample output](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.txt)
+* [accepts_and_methods](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.rb) [(sample output)](https://github.com/rickhull/mudbug/blob/master/examples/accepts_and_methods.txt)
 
 Funny, that
 -----------

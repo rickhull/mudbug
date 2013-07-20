@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
-require 'mb_config'
+#require 'mb_config'
+require 'dotcfg'
+require 'mudbug'
+
+CONFIG = DotCfg.new '~/.mudbug', :json
 
 def usage(msg = nil)
   puts "ERROR: #{msg}" if msg
@@ -20,7 +24,7 @@ USAGE:
   * `accept` is optional; valid values include json, html, text
 EOF
   puts
-  puts "CONFIG: #{MbConfig.dump}"
+  puts "CONFIG: #{CONFIG.pretty}"
 
   exit 1
 end
@@ -31,7 +35,7 @@ def conclude(msg)
 end
 
 #
-# Config section: handle commands that manipulate MbConfig
+# Config section: handle commands that manipulate CONFIG
 # Should exit in all cases with conclude()
 #
 
@@ -47,20 +51,20 @@ if cfg_cmd
     val = ARGV.shift
     if val and !val.empty?
       if val.downcase == 'nil'
-        MbConfig.delete cfg_cmd
-        MbConfig.save
+        CONFIG.delete cfg_cmd
+        CONFIG.save
         conclude "removed config for #{cfg_cmd}"
       else
-        MbConfig[cfg_cmd] = val
-        MbConfig.save
+        CONFIG[cfg_cmd] = val
+        CONFIG.save
       end
     else
-      val = MbConfig[cfg_cmd] or conclude "no #{cfg_cmd} is set"
+      val = CONFIG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
     end
     conclude "Using #{cfg_cmd}: #{val}"
 
   when 'reset'
-    MbConfig.reset
+    CONFIG.reset
     conclude "config was reset"
 
   when 'payload'
@@ -69,17 +73,17 @@ if cfg_cmd
     if val and !val.empty?
       case val.downcase
       when '-'
-        MbConfig['payload'] = JSON.parse $stdin.read
-        MbConfig.save
+        CONFIG['payload'] = JSON.parse $stdin.read
+        CONFIG.save
       when 'nil'
-        MbConfig.delete 'payload'
-        MbConfig.save
+        CONFIG.delete 'payload'
+        CONFIG.save
         conclude "removed config for payload"
       end
     else
-      MbConfig['payload'] or conclude "no payload is set"
+      CONFIG['payload'] or conclude "no payload is set"
     end
-    conclude "Using payload:\n#{JSON.pretty_generate MbConfig['payload']}"
+    conclude "Using payload:\n#{JSON.pretty_generate CONFIG['payload']}"
 
   when 'accept'
     ARGV.shift # confirmed cfg_cmd, go ahead and shift
@@ -90,8 +94,8 @@ if cfg_cmd
 
     case accepts.length
     when 0
-      if MbConfig['accept']
-        conclude "Using accept: #{MbConfig['accept'].join(' ')}"
+      if CONFIG['accept']
+        conclude "Using accept: #{CONFIG['accept'].join(' ')}"
       else
         conclude "no accept is set"
       end
@@ -101,26 +105,26 @@ if cfg_cmd
     else
       accepts.map! { |s| s.gsub %r{[ ,:]+}, '' }
     end
-    MbConfig['accept'] = accepts
-    MbConfig.save
-    conclude "using accept: #{MbConfig['accept']}"
+    CONFIG['accept'] = accepts
+    CONFIG.save
+    conclude "using accept: #{CONFIG['accept']}"
 
   when 'config'
-    conclude MbConfig.dump
+    conclude CONFIG.pretty
   end
 end
 
 #
-# OK, we're not manipulating MbConfig
-# Create Mudbug, determine method and path - from MbConfig and cmd line args
+# OK, we're not manipulating CONFIG
+# Create Mudbug, determine method and path - from CONFIG and cmd line args
 #
 
-# set the host, always from MbConfig
+# set the host, always from CONFIG
 #
-usage "no host is set" unless MbConfig['host']
-mb = Mudbug.new MbConfig['host']
+usage "no host is set" unless CONFIG['host']
+mb = Mudbug.new CONFIG['host']
 
-mb.accept MbConfig['accept'].map(&:to_sym) if MbConfig['accept']
+mb.accept CONFIG['accept'].map(&:to_sym) if CONFIG['accept']
 
 # set the method, possibly from CLI args
 #
@@ -128,7 +132,7 @@ case ARGV.first
 when 'get', 'post', 'put', 'delete'# , 'patch'   # Soon(tm)
   method = ARGV.shift
 else
-  method = MbConfig['method'] or usage "no method provided"
+  method = CONFIG['method'] or usage "no method provided"
 end
 
 # set the path, possibly from CLI args
@@ -137,7 +141,7 @@ case ARGV.first
 when %r{^\/} # starts with a slash
   path = ARGV.shift
 else
-  path = MbConfig['path'] or usage "no path provided"
+  path = CONFIG['path'] or usage "no path provided"
 end
 
 # determine method
@@ -151,7 +155,7 @@ when 'post', 'put', 'patch'
   # get payload
   case ARGV.first
   when nil
-    payload = MbConfig['payload'] or usage "no payload provided"
+    payload = CONFIG['payload'] or usage "no payload provided"
   when '-'
     begin
       payload = JSON.parse $stdin.read

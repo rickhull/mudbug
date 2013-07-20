@@ -9,11 +9,12 @@ Gem::Specification.new do |s|
 
   s.executables << 'mb'
 
-  s.add_runtime_dependency  "rest-client", ["~> 1"]
-  s.add_runtime_dependency         "json", ["~> 1"]
-  s.add_runtime_dependency        "lager", [">= 0.2"]
-  s.add_development_dependency "minitest", [">= 0"]
-  s.add_development_dependency  "buildar", ["~> 1.4"]
+  s.add_runtime_dependency  "rest-client", "~> 1"
+  s.add_runtime_dependency         "json", "~> 1"
+  s.add_runtime_dependency        "lager", ">= 0.2"
+  s.add_runtime_dependency       "dotcfg", "~> 0.2"
+  s.add_development_dependency "minitest", ">= 0"
+  s.add_development_dependency  "buildar", "~> 1.4"
 
   # dynamic setup
   this_dir = File.expand_path('..', __FILE__)

@@ -83,7 +83,7 @@ class Mudbug
   attr_reader :options
   attr_accessor :host
 
-  def initialize(host, options = {})
+  def initialize(host = 'localhost', options = {})
     @host = host
     @options = options
     accept :json, :html, :text

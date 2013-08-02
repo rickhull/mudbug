@@ -1,26 +1,50 @@
 #!/usr/bin/env ruby
 
+bef_require = Time.now
+
 require 'dotcfg'
 require 'mudbug'
 
+$VERBOSE = true
+
+puts "Required in #{Time.now - bef_require} seconds" if $VERBOSE
+bef_config = Time.now
+
 CONFIG = DotCfg.new '~/.mudbug', :json
+RESET_ARG = '--reset'
+
+puts "Loaded in #{Time.now - bef_config} seconds" if $VERBOSE
+
+START = Time.now
+
+
 
 def usage(msg = nil)
   print "ERROR: #{msg}\n\n" if msg
   puts <<EOF
 USAGE:
-  mb [get|delete] [PATH]         - GET or DELETE PATH
-  mb [post|put] [PATH] -         - POST or PUT payload (STDIN) to PATH
+  mb [get|delete] [$path]           - GET or DELETE $path
+  mb [post|put] [$path] [-|"$json"] - POST or PUT payload to $path
 
-  mb host|method|path [VAL]      - Set or display current config item
-  mb accept [ACC1] [ACC2] [etc]  - Set or display accept types
-  mb payload [-]                 - Set (from STDIN) or display payload config
-  mb config                      - Display current config
+  * method, path, and payload, if configured, are not required arguments
+  * valid methods: get, post, put, patch, delete
+  * path may be a path like /foo or a full URL like http://foo.com/bar
+  * payload must be valid JSON
+  * payload should be provided via STDIN or a properly escaped quoted arg
 
-  * A `host` must be configured for mb to operate
-  * `method`, `path`, and `payload`, if configured, are not required arguments
-  * Set a config item to nil in order to remove it
-  * `accept` is optional; valid values include json, html, text
+CONFIGURATION:
+  mb config [--reset]               - Display or reset the overall config
+  mb config $CONFIG_ITEM [--reset]  - Display or reset $CONFIG_ITEM
+  mb config host|method|path $val   - set host to $val
+  mb config accept $val1 [$val2]    - set accept to multiple values
+  mb config payload -|"$json"       - set payload from STDIN or $json
+
+  * CONFIG_ITEMS: host, accept, method, path, payload
+  * valid accepts: json, html, text
+
+OPTIONS:
+  --verbose     - log level INFO and extra output
+  --debug       - log level DEBUG
 EOF
   puts
   puts "CONFIG: #{CONFIG.pretty}"
@@ -30,87 +54,98 @@ end
 
 def conclude(msg)
   puts msg
+  puts "Completed in #{Time.now - START} seconds" if $VERBOSE
   exit 0
 end
 
 #
 # Config section: handle commands that manipulate CONFIG
-# Should exit in all cases with conclude()
+# Should exit in all recognized cases with conclude()
 #
 
 # don't consume ARGV here
 cfg_cmd = ARGV.first
 
-if cfg_cmd
-  cfg_cmd = cfg_cmd.downcase
+if cfg_cmd and cfg_cmd.downcase == 'config'
+  ARGV.shift
 
-  case cfg_cmd
+  cfg_key = ARGV.shift
+  conclude "CONFIG: #{CONFIG.pretty}" unless cfg_key
+
+  cfg_key = cfg_key.downcase
+  case cfg_key
+  when RESET_ARG
+    CONFIG.reset
+    puts "CONFIG was reset"
+
   when 'host', 'method', 'path'
-    ARGV.shift # confirmed cfg_cmd, go ahead and shift
     val = ARGV.shift
     if val and !val.empty?
-      if val.downcase == 'nil'
-        CONFIG.delete cfg_cmd
+      if val.downcase == RESET_ARG
+        CONFIG.delete cfg_key
         CONFIG.save
-        conclude "removed config for #{cfg_cmd}"
+        puts "#{cfg_key} was reset"
       else
-        CONFIG[cfg_cmd] = val
+        CONFIG[cfg_key] = val
         CONFIG.save
       end
     else
-      val = CONFIG[cfg_cmd] or conclude "no #{cfg_cmd} is set"
+      val = CONFIG[cfg_key]
+      puts (val ? "#{cfg_key}: #{val}" : "#{cfg_key} is not set")
     end
-    conclude "Using #{cfg_cmd}: #{val}"
-
-  when 'reset'
-    CONFIG.reset
-    conclude "config was reset"
 
   when 'payload'
-    ARGV.shift # confirmed
     val = ARGV.shift
     if val and !val.empty?
       case val.downcase
-      when '-'
-        CONFIG['payload'] = JSON.parse $stdin.read
-        CONFIG.save
-      when 'nil'
+      when RESET_ARG
         CONFIG.delete 'payload'
         CONFIG.save
-        conclude "removed config for payload"
+        puts 'payload was reset'
+      when '-'
+        begin
+          CONFIG['payload'] = JSON.parse $stdin.read
+          CONFIG.save
+        rescue JSON::ParserError => e
+          puts "#{e.class} - #{e}"
+        end
+      else
+        begin
+          CONFIG['payload'] = JSON.parse val
+          CONFIG.save
+        rescue JSON::ParserError => e
+          puts "#{e.class} - #{e}"
+        end
       end
     else
-      CONFIG['payload'] or conclude "no payload is set"
+      val = CONFIG['payload'] && JSON.pretty_generate(CONFIG['payload'])
+      puts (val ? "payload: #{val}" : "payload is not set")
     end
-    conclude "Using payload:\n#{JSON.pretty_generate CONFIG['payload']}"
 
   when 'accept'
-    ARGV.shift # confirmed cfg_cmd, go ahead and shift
     accepts = []
-    until ARGV.empty?
-      accepts << ARGV.shift
-    end
+    accepts << ARGV.shift until ARGV.empty?
 
-    case accepts.length
-    when 0
-      if CONFIG['accept']
-        conclude "Using accept: #{CONFIG['accept'].join(' ')}"
+    if accepts.length == 1
+      if accepts.first == RESET_ARG
+        accepts.shift
+        CONFIG.delete 'accept'
+        CONFIG.save
+        puts 'accept was reset'
       else
-        conclude "no accept is set"
+        # did they provide a quoted or CSV list? or pseudo-symbols with colons?
+        accepts = accepts.first.split(/[ ,:]+/).select { |s| !s.empty? }
       end
-    when 1
-      # did they provide a quoted or CSV list? or pseudo-symbols with colons?
-      accepts = accepts.first.split(/[ ,:]+/).select { |s| !s.empty? }
-    else
-      accepts.map! { |s| s.gsub %r{[ ,:]+}, '' }
     end
-    CONFIG['accept'] = accepts
-    CONFIG.save
-    conclude "using accept: #{CONFIG['accept']}"
-
-  when 'config'
-    conclude CONFIG.pretty
+    if accepts.length > 0
+      CONFIG['accept'] = accepts.map { |s| s.gsub /[ ,:]+/, '' }
+      CONFIG.save
+    else
+      val = CONFIG['accept']
+      puts (val ? "accept: " + val.join(' ') : "accept is not set")
+    end
   end
+  conclude "CONFIG: #{CONFIG.pretty}"
 end
 
 #
@@ -118,11 +153,11 @@ end
 # Create Mudbug, determine method and path - from CONFIG and cmd line args
 #
 
-# set the host, always from CONFIG
-#
-usage "no host is set" unless CONFIG['host']
-mb = Mudbug.new CONFIG['host']
+mb = Mudbug.new
 
+# set the host and Accept if configured
+#
+mb.host = CONFIG['host'] if CONFIG['host']
 mb.accept CONFIG['accept'].map(&:to_sym) if CONFIG['accept']
 
 # set the method, possibly from CLI args
@@ -137,7 +172,7 @@ end
 # set the path, possibly from CLI args
 #
 case ARGV.first
-when %r{^\/} # starts with a slash
+when %r{^\/|http} # starts with a slash or http
   path = ARGV.shift
 else
   path = CONFIG['path'] or usage "no path provided"
@@ -170,6 +205,8 @@ end
 #
 # finally!
 #
+
+puts "Configured in #{Time.now - START} seconds" if $VERBOSE
 
 begin
   data = mb.send(*args)

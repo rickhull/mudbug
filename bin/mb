@@ -5,7 +5,12 @@ bef_require = Time.now
 require 'dotcfg'
 require 'mudbug'
 
-$VERBOSE = true
+$VERBOSE = ARGV.delete '--verbose'
+Mudbug.log_level = :info if $VERBOSE
+if ARGV.delete '--debug'
+  Mudbug.log_level = :debug
+  $VERBOSE = true
+end
 
 puts "Required in #{Time.now - bef_require} seconds" if $VERBOSE
 bef_config = Time.now
@@ -16,8 +21,6 @@ RESET_ARG = '--reset'
 puts "Loaded in #{Time.now - bef_config} seconds" if $VERBOSE
 
 START = Time.now
-
-
 
 def usage(msg = nil)
   print "ERROR: #{msg}\n\n" if msg

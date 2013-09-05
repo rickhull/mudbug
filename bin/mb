@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-bef_require = Time.now
+$LAST_CHECKPOINT = Time.now
 
 require 'dotcfg'
 require 'mudbug'
@@ -12,15 +12,22 @@ if ARGV.delete '--debug'
   $VERBOSE = true
 end
 
-puts "Required in #{Time.now - bef_require} seconds" if $VERBOSE
-bef_config = Time.now
+def checkpoint(msg)
+  et = sprintf("%0.2f", Time.now - $LAST_CHECKPOINT)
+  $LAST_CHECKPOINT = Time.now
+  puts "#{msg} in #{et} seconds" if $VERBOSE
+end
+
+#####################
+checkpoint "Required"
+#####################
 
 CONFIG = DotCfg.new '~/.mudbug', :json
 RESET_ARG = '--reset'
 
-puts "Loaded in #{Time.now - bef_config} seconds" if $VERBOSE
-
-START = Time.now
+###################
+checkpoint "Loaded"
+###################
 
 def usage(msg = nil)
   print "ERROR: #{msg}\n\n" if msg
@@ -57,7 +64,11 @@ end
 
 def conclude(msg)
   puts msg
-  puts "Completed in #{Time.now - START} seconds" if $VERBOSE
+
+  ######################
+  checkpoint "Completed"
+  ######################
+
   exit 0
 end
 
@@ -205,14 +216,20 @@ else
   usage "Bad HTTP method #{method}"
 end
 
+#######################
+checkpoint "Configured"
+#######################
+
 #
 # finally!
 #
 
-puts "Configured in #{Time.now - START} seconds" if $VERBOSE
-
 begin
   data = mb.send(*args)
+
+  ######################
+  checkpoint "Transmitted"
+  ######################
 rescue RuntimeError => e
   puts "#{e} - #{e.class}"
   exit 1

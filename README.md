@@ -19,8 +19,9 @@ $ gem install mudbug       # sudo as necessary
 ```
 Or, if using [Bundler](http://bundler.io/), add to your Gemfile:
 ```ruby
-gem 'mudbug', '~> 0.6'
+gem 'mudbug', '~> 0.8'
 ```
+
 Quick Start
 -----------
 Initialize it with a host:
@@ -55,18 +56,18 @@ Declare what you accept: (optional, default shown)
 mb.accept :json, :html, :text
 ```
 
-You can pass through per-request [options to rest-client](https://github.com/rest-client/rest-client/blob/master/lib/restclient/request.rb)
+You can pass through per-request query params:
 
 ```ruby
-mb.get '/', max_redirects: 3
-# => "<!doctype html><html ... <head><meta content=\"Search the world's information ... "
+mb.get '/', foo: bar
+# i.e. GET /?foo=bar
 ```
 
 [RestClient exceptions](https://github.com/rest-client/rest-client/blob/master/lib/restclient/exceptions.rb) will be passed through.  POST and PUT payloads will be sent as strings.  Non-string payloads will be converted to JSON by calling #to_json.
 
 ```ruby
 mb = Mudbug.new 'plus.google.com'
-mb.post '/', { 'hi' => 'mom' }, max_redirects: 3
+mb.post '/', { 'hi' => 'mom' }
 
 # /path/to/lib/restclient/abstract_response.rb:48:in `return!': 405 Method Not Allowed (RestClient::MethodNotAllowed)
 

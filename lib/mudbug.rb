@@ -116,15 +116,16 @@ class Mudbug
       path = "/#{path}" unless path[0,1] == '/'
       url = "http://#{@host}#{path}"
     end
-    RestClient::Resource.new url, @options.merge(options)
+    RestClient::Resource.new(url, merge(options))
   end
 
   # no payload
   #
   [:get, :delete].each { |meth|
-    define_method(meth) { |path, options = {}|
-      res = resource(path, options)
-      self.class.process(res.send(meth), res.headers[:accept])
+    define_method(meth) { |path, params = {}|
+      res = resource(path)
+      resp = res.send(meth, params: params)
+      self.class.process(resp, res.headers[:accept])
     }
   }
 
@@ -133,11 +134,26 @@ class Mudbug
   # otherwise apply #to_json to payload automatically.  Quack.
   #
   [:post, :put].each { |meth|
-    define_method(meth) { |path, payload, options={}|
-      options[:content_type] ||= CONTENT[:json][:type]
+    define_method(meth) { |path, payload, params = {}|
       payload = payload.to_json unless payload.is_a?(String)
-      res = resource(path, options)
-      self.class.process(res.send(meth, payload), res.headers[:accept])
+      res = resource(path, content_type: CONTENT[:json][:type])
+      resp = res.send(meth, payload, params: params)
+      self.class.process(resp, res.headers[:accept])
     }
   }
+
+  # a standard merge would throw away @options[:headers][:accept], if
+  # options[:headers] is provided.  Handle nested hashes while still allowing
+  # @options to be overridden
+  #
+  def merge(options)
+    # gah, let's go ahead and do this for all nested hashes we maintain
+    result = options.merge({})   # work on a copy, TODO: better way (not dup)
+    @options.each { |key, hsh|
+      if result[key] and result[key].is_a?(Hash) and hsh.is_a?(Hash)
+        result[key] = hsh.merge(result[key])
+      end
+    }
+    result
+  end
 end

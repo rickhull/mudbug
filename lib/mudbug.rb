@@ -49,6 +49,7 @@ class Mudbug
   # accept is e.g. [:json, :html]
   #
   def self.process(resp, accept = nil)
+    @lager.debug { "accept: #{accept}" }
     @lager.debug { "response code: #{resp.code}" }
     @lager.debug { "response headers:\n" << resp.raw_headers.inspect }
 
@@ -107,7 +108,7 @@ class Mudbug
   # handling
   # supports /path/to/res, path/to/res, http://host.com/path/to/res
   #
-  def resource(path, options = {})
+  def resource(path)
     uri = URI.parse(path)
     if uri.host # a full URL was passed in
       @host = uri.host
@@ -116,7 +117,7 @@ class Mudbug
       path = "/#{path}" unless path[0,1] == '/'
       url = "http://#{@host}#{path}"
     end
-    RestClient::Resource.new(url, merge(options))
+    RestClient::Resource.new(url, @options)
   end
 
   # no payload
@@ -136,24 +137,11 @@ class Mudbug
   [:post, :put].each { |meth|
     define_method(meth) { |path, payload, params = {}|
       payload = payload.to_json unless payload.is_a?(String)
-      res = resource(path, content_type: CONTENT[:json][:type])
-      resp = res.send(meth, payload, params: params)
+      res = resource(path)
+      resp = res.send(meth, payload,
+                      content_type: CONTENT[:json][:type],
+                      params: params)
       self.class.process(resp, res.headers[:accept])
     }
   }
-
-  # a standard merge would throw away @options[:headers][:accept], if
-  # options[:headers] is provided.  Handle nested hashes while still allowing
-  # @options to be overridden
-  #
-  def merge(options)
-    # gah, let's go ahead and do this for all nested hashes we maintain
-    result = options.merge({})   # work on a copy, TODO: better way (not dup)
-    @options.each { |key, hsh|
-      if result[key] and result[key].is_a?(Hash) and hsh.is_a?(Hash)
-        result[key] = hsh.merge(result[key])
-      end
-    }
-    result
-  end
 end

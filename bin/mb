@@ -13,9 +13,11 @@ if ARGV.delete '--debug'
 end
 
 def checkpoint(msg)
-  et = sprintf("%0.2f", Time.now - $LAST_CHECKPOINT)
+  if $VERBOSE
+    et = sprintf("%0.2f", Time.now - $LAST_CHECKPOINT)
+    puts "#{msg} in #{et} seconds"
+  end
   $LAST_CHECKPOINT = Time.now
-  puts "#{msg} in #{et} seconds" if $VERBOSE
 end
 
 #####################

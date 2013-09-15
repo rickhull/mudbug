@@ -82,7 +82,7 @@ Mudbug.new('facebook.com').delete '/'
 
 Command Line
 ------------
-An executable `[mb](https://github.com/rickhull/mudbug/blob/master/bin/mb)` is provided.  It wants arguments HOST, METHOD, PATH, PAYLOAD.  A persistent configuration system is provided via `dotcfg`, such that you can provide default values for some arguments and only specify the remaining arguments on the command line.
+An executable [mb](https://github.com/rickhull/mudbug/blob/master/bin/mb) is provided.  It wants arguments HOST, METHOD, PATH, PAYLOAD.  A persistent configuration system is provided via `dotcfg`, such that you can provide default values for some arguments and only specify the remaining arguments on the command line.
 
 Digging Deeper
 --------------

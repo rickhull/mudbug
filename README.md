@@ -84,32 +84,6 @@ Command Line
 ------------
 An executable `mb` is provided.  It wants arguments HOST, METHOD, PATH, PAYLOAD.  A persistent configuration system is provided via `dotcfg`, such that you can provide default values for some arguments and only specify the remaining arguments on the command line.
 
-The idea is that you can do something like `git config --email foo@bar.com`.  Let's use the git CLI as an inspiration:
-
-```
-mb config --host 10.0.0.1 --method=GET -p/foo
-```
-
-So, we support:
-
-* --key value
-* --key=value
-* -k value
-* -kvalue
-
-### Argument rules
-
-We need to know at minimum: host, method, path
-
-For each of those, and any other needed info:
-
-1. Check --arg, e.g. mb --host localhost
-2. Check config
-3. Check ARGV
-
-So long as HOST is not accepted on the command line, and METHOD is whitelisted, and PATH has to start with /, then everything can be positionally identified.  We can get away with it.
-
-
 Digging Deeper
 --------------
 Call Mudbug#resource directly for finer-grained response handling:

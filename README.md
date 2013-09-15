@@ -97,7 +97,7 @@ So, we support:
 * -k value
 * -kvalue
 
-=== Argument rules ===
+### Argument rules
 
 We need to know at minimum: host, method, path
 

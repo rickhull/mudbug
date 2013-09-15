@@ -2,7 +2,7 @@ Mudbug
 =======
 Mudbug is a JSON-oriented, thin wrapper around [rest-client](https://github.com/rest-client/rest-client)'s [RestClient::Resource](https://github.com/rest-client/rest-client#usage-activeresource-style)
 
-An executable `mb` is provided, which compares favorably to `curl` or `wget` in most JSON situations.
+An executable `mb` is provided, which compares favorably to `curl` or `wget` in applicable situations.
 
 Features
 --------

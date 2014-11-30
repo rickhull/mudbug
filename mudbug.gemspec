@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency  "rest-client", "~> 1"
   s.add_runtime_dependency         "json", "~> 1"
-  s.add_runtime_dependency        "lager", "~> 0"
+  s.add_runtime_dependency        "lager", "~> 1"
   s.add_runtime_dependency       "dotcfg", "~> 0.2"
   s.add_development_dependency "minitest", "~> 1"
   s.add_development_dependency  "buildar", "~> 2.0"

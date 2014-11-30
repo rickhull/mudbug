@@ -1,7 +1,7 @@
 require 'minitest/spec'
 require 'minitest/autorun'
 
-require_relative '../lib/mudbug'
+# require_relative '../lib/mudbug'
 
 describe "Mudbug" do
   it "has no tests" do

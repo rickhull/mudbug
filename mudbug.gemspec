@@ -16,12 +16,19 @@ Gem::Specification.new do |s|
   s.add_development_dependency "minitest", ">= 0"
   s.add_development_dependency  "buildar", "~> 2.0"
 
-  # dynamic setup
+  # set version dynamically from version file contents      
   this_dir = File.expand_path('..', __FILE__)
   version_file = File.join(this_dir, 'VERSION')
-  manifest_file = File.join(this_dir, 'MANIFEST.txt')
-
-  # dynamic assignments
   s.version  = File.read(version_file).chomp
-  s.files = File.readlines(manifest_file).map { |f| f.chomp }
+
+  s.files = %w[
+    mudbug.gemspec
+    VERSION
+    README.md
+    Rakefile
+    lib/mudbug.rb
+    test/mudbug.rb
+    examples/accepts_and_methods.rb
+    bin/mb
+  ]
 end

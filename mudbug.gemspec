@@ -10,13 +10,13 @@ Gem::Specification.new do |s|
   s.executables << 'mb'
 
   s.add_runtime_dependency  "rest-client", "~> 1"
-  s.add_runtime_dependency         "json", "~> 1"
+  s.add_runtime_dependency         "json", ">= 1"
   s.add_runtime_dependency        "lager", "~> 1"
   s.add_runtime_dependency       "dotcfg", "~> 0.2"
-  s.add_development_dependency "minitest", "~> 1"
+  s.add_development_dependency "minitest", ">= 1"
   s.add_development_dependency  "buildar", "~> 2.0"
 
-  # set version dynamically from version file contents      
+  # set version dynamically from version file contents
   this_dir = File.expand_path('..', __FILE__)
   version_file = File.join(this_dir, 'VERSION')
   s.version  = File.read(version_file).chomp

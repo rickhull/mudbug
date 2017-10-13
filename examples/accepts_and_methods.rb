@@ -1,6 +1,4 @@
 require 'mudbug'
-# useful for development purposes
-#require_relative '../lib/mudbug'
 
 sites = %w{google.com yahoo.com microsoft.com amazon.com ibm.com reddit.com}
 accepts = [:json, :html, :text, :xml]

@@ -66,6 +66,7 @@ class Mudbug
 
     # get the content-type
     ct, charset = ct.split(';').map { |s| s.strip }
+    @lager.info { "got charset: #{charset}; ignoring" } if charset
 
     # raise if we got Content-type we didn't ask for
     if accept and !accept.include?(ct)

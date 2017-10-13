@@ -86,6 +86,12 @@ describe "Mudbug" do
       out.must_be_empty
       err.wont_be_empty
     end
+
+    it "must faithfully yield valid JSON" do
+      data = { "hi" => "mom" }
+      resp = rest_client_resp(data.to_json, content_type: 'application/json')
+      Mudbug.process(resp).must_equal data
+    end
   end
 
   #

@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency "minitest", "~> 5.0"
   s.add_development_dependency  "buildar", "~> 3.0"
 
+  s.required_ruby_version = "~> 2"
+
   # set version dynamically from version file contents
-  this_dir = File.expand_path('..', __FILE__)
-  version_file = File.join(this_dir, 'VERSION')
-  s.version  = File.read(version_file).chomp
+  s.version  = File.read(File.join(__dir__, 'VERSION')).chomp
 
   s.files = %w[
     mudbug.gemspec

@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/rickhull/mudbug.svg?branch=master)](https://travis-ci.org/rickhull/conway_deathmatch)
 [![Gem Version](https://badge.fury.io/rb/mudbug.svg)](http://badge.fury.io/rb/mudbug)
 [![Code Climate](https://codeclimate.com/github/rickhull/mudbug/badges/gpa.svg)](https://codeclimate.com/github/rickhull/mudbug)
 [![Dependency Status](https://gemnasium.com/rickhull/mudbug.svg)](https://gemnasium.com/rickhull/mudbug)

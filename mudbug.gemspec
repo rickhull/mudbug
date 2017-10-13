@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.executables << 'mb'
 
-  s.add_runtime_dependency  "rest-client", ">= 1.8.0", "< 2"
+  s.add_runtime_dependency  "rest-client", "~> 2.0"
   s.add_runtime_dependency         "json", ">= 1.7.7"
   s.add_runtime_dependency        "lager", "~> 1"
   s.add_runtime_dependency       "dotcfg", "~> 0.2"

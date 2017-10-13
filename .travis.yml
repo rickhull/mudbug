@@ -1,0 +1,8 @@
+language: ruby
+rvm:
+  - 2.2
+  - 2.3
+  - 2.4
+  - ruby-head
+install: gem install rest-client lager json minitest
+script: rake test

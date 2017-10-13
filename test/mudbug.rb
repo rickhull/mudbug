@@ -2,6 +2,11 @@ require 'minitest/autorun'
 require 'mudbug'
 
 describe "Mudbug" do
+
+  #
+  # class methods
+  #
+
   describe "accept_header" do
     it "must generate valid headers" do
       h = Mudbug.accept_header(:json, :xml, :html, :text, :foo)
@@ -80,6 +85,67 @@ describe "Mudbug" do
       end
       out.must_be_empty
       err.wont_be_empty
+    end
+  end
+
+  #
+  # instance methods
+  #
+
+  describe "resource" do
+    it "must handle various path formulations" do
+      paths = %w[/path/to/res path/to/res http://localhost/path/to/res]
+      mb = Mudbug.new 'localhost'
+      paths.each { |p|
+        res = mb.resource(p)
+        res.wont_be_nil
+        res.url.must_equal 'http://localhost/path/to/res'
+      }
+    end
+
+    it "must update the host when provided" do
+      mb = Mudbug.new
+      mb.host.must_equal 'localhost'
+      res = mb.resource('http://localghost/path/to/res')
+      res.url.must_equal 'http://localghost/path/to/res'
+      mb.host.must_equal 'localghost'
+    end
+  end
+
+  describe "accept" do
+    before do
+      @mb = Mudbug.new
+    end
+
+    it "must accept nil to remove accept headers" do
+      @mb.options[:headers][:accept].wont_be_nil
+      @mb.accept nil
+      @mb.options[:headers][:accept].must_be_nil
+    end
+
+    it "must accept some known symbols" do
+      [:json, :html, :text].each { |sym|
+        @mb.accept sym
+        @mb.options[:headers][:accept].must_equal Mudbug.accept_header(sym)
+      }
+    end
+
+    it "must accept an array" do
+      ary = [:json, :html, :text]
+      @mb.accept ary
+      ah = @mb.options[:headers][:accept]
+      ah.must_be_kind_of String
+      ah.split(', ').length.must_equal ary.length
+    end
+
+    it "must accept unknown symbols and strings" do
+      [:foo, 'foo'].each { |unk|
+        @mb.accept unk
+        ah = @mb.options[:headers][:accept]
+        ah.must_be_kind_of String
+        ah.must_equal Mudbug.accept_header unk
+        ah.must_equal "application/#{unk}"
+      }
     end
   end
 end

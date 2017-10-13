@@ -1,4 +1,3 @@
-rwh@ubuntuVM:~/git/mudbug$ ruby examples/accepts_and_methods.rb
 
 Checking Accepts across sites
 =============================
@@ -27,12 +26,13 @@ GET http://microsoft.com/  [xml]
 Asked for application/xml but got text/html (Mudbug::ContentTypeError)
 
 GET http://amazon.com/  [json]
-Asked for application/json but got text/html (Mudbug::ContentTypeError)
+503 Service Unavailable (RestClient::ServiceUnavailable)
 GET http://amazon.com/  [html]
+503 Service Unavailable (RestClient::ServiceUnavailable)
 GET http://amazon.com/  [text]
-Asked for text/plain but got text/html (Mudbug::ContentTypeError)
+503 Service Unavailable (RestClient::ServiceUnavailable)
 GET http://amazon.com/  [xml]
-Asked for application/xml but got text/html (Mudbug::ContentTypeError)
+503 Service Unavailable (RestClient::ServiceUnavailable)
 
 GET http://ibm.com/  [json]
 Asked for application/json but got text/html (Mudbug::ContentTypeError)
@@ -56,34 +56,34 @@ Checking HTTP methods across sites
 ==================================
 POST/PUT payload = "{\"hi\":\"mom\"}"
 
-GET http://google.com/
+GET http://google.com/ 
 POST http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 PUT http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 DELETE http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 
-GET http://yahoo.com/
+GET http://yahoo.com/ 
 POST http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 PUT http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 DELETE http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
-GET http://microsoft.com/
+GET http://microsoft.com/ 
 POST http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
-PUT http://microsoft.com/ 404 Resource Not Found: The resource you are looking for has been removed, had its name changed, or is temporarily unavailable. (RestClient::ResourceNotFound)
-DELETE http://microsoft.com/ 404 Resource Not Found: The resource you are looking for has been removed, had its name changed, or is temporarily unavailable. (RestClient::ResourceNotFound)
+PUT http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+DELETE http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
-GET http://amazon.com/
-POST http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
-PUT http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
+GET http://amazon.com/ 503 Service Unavailable (RestClient::ServiceUnavailable)
+POST http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 DELETE http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
-GET http://ibm.com/
+GET http://ibm.com/ 
 POST http://ibm.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 PUT http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
 DELETE http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
 
-GET http://reddit.com/
-POST http://reddit.com/ 302 Found (RestClient::Found)
-PUT http://reddit.com/ 302 Found (RestClient::Found)
-DELETE http://reddit.com/ 302 Found (RestClient::Found)
+GET http://reddit.com/ 
+POST http://reddit.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+PUT http://reddit.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+DELETE http://reddit.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 DONE

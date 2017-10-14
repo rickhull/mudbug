@@ -91,6 +91,7 @@ class Mudbug
     @protocol = https ? 'https' : 'http'
     @options = options
     accept :json, :html, :text
+    yield self if block_given?
   end
 
   # Writes the Accept: header for you

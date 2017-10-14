@@ -98,6 +98,14 @@ describe "Mudbug" do
   # instance methods
   #
 
+  describe "initalize" do
+    it "must allow https" do
+      mb = Mudbug.new 'localhost', https: true
+      mb.protocol.must_equal 'https'
+      mb.options[:https].must_be_nil
+    end
+  end
+
   describe "resource" do
     it "must handle various path formulations" do
       paths = %w[/path/to/res path/to/res http://localhost/path/to/res]
@@ -115,6 +123,16 @@ describe "Mudbug" do
       res = mb.resource('http://localghost/path/to/res')
       res.url.must_equal 'http://localghost/path/to/res'
       mb.host.must_equal 'localghost'
+    end
+
+    it "must respect https" do
+      mb = Mudbug.new
+      mb.protocol.wont_equal 'https'
+      res = mb.resource('https://localhost/')
+      mb.protocol.must_equal 'https'
+      res.url.must_equal 'https://localhost/'
+      res = mb.resource('/foo')
+      res.url.must_equal 'https://localhost/foo'
     end
   end
 

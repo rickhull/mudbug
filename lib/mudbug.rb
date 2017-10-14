@@ -83,10 +83,12 @@ class Mudbug
   end
 
   attr_reader :options
-  attr_accessor :host
+  attr_accessor :host, :protocol
 
   def initialize(host = 'localhost', options = {})
     @host = host
+    https = options.delete(:https)
+    @protocol = https ? 'https' : 'http'
     @options = options
     accept :json, :html, :text
   end
@@ -113,10 +115,11 @@ class Mudbug
     uri = URI.parse(path)
     if uri.host # a full URL was passed in
       @host = uri.host
+      @protocol = uri.scheme
       url = uri.to_s
     else
       path = "/#{path}" unless path[0,1] == '/'
-      url = "http://#{@host}#{path}"
+      url = "#{@protocol}://#{@host}#{path}"
     end
     RestClient::Resource.new(url, @options)
   end

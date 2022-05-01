@@ -23,7 +23,7 @@ Installation
 ------------
 Install the gem:
 ```
-$ gem install mudbug       # sudo as necessary
+$ gem install mudbug
 ```
 Or, if using [Bundler](http://bundler.io/), add to your Gemfile:
 ```ruby

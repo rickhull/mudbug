@@ -31,5 +31,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler: none
+      - name: Install dependencies
+        run: gem install rest-client lager
       - name: Run tests
         run: rake test

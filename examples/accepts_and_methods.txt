@@ -64,7 +64,7 @@ DELETE http://google.com/ 405 Method Not Allowed (RestClient::MethodNotAllowed)
 GET http://yahoo.com/ 
 POST http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 PUT http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
-DELETE http://yahoo.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+DELETE http://yahoo.com/ 403 Forbidden (RestClient::Forbidden)
 
 GET http://microsoft.com/ 
 POST http://microsoft.com/ 301 Moved Permanently (RestClient::MovedPermanently)
@@ -78,8 +78,8 @@ DELETE http://amazon.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 GET http://ibm.com/ 
 POST http://ibm.com/ 301 Moved Permanently (RestClient::MovedPermanently)
-PUT http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
-DELETE http://ibm.com/ 403 Forbidden (RestClient::Forbidden)
+PUT http://ibm.com/ 301 Moved Permanently (RestClient::MovedPermanently)
+DELETE http://ibm.com/ 301 Moved Permanently (RestClient::MovedPermanently)
 
 GET http://reddit.com/ 
 POST http://reddit.com/ 301 Moved Permanently (RestClient::MovedPermanently)
